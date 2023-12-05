@@ -1,0 +1,36 @@
+
+include('shared.lua')
+
+function ENT:Draw3D2D( ent )
+
+    // Distance check
+    if self:GetPos():Distance( ply:GetPos() ) >= 100 then return end
+
+
+    // Draw a header that says "UNSC Vehicle Requesition"
+    draw.DrawText( "UNSC Vehicle Requesition", "HK_QuanticoHeader", self.frameW * .5, 330, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+
+
+    // Draw a large button that says "Request Vehicle"
+    local btnOutline = 30
+    local btnW, btnH = 1000, 300
+    btnW, btnH = btnW+btnOutline, btnH+btnOutline
+    draw.RoundedBox( 0, (self.frameW * .5)-(btnW * .5), (self.frameH * .5)-(btnH * .5), btnW, btnH, Color( 9, 255, 0) )
+    btnW, btnH = btnW-btnOutline, btnH-btnOutline
+    
+    local btnColor = Color( 27, 27, 27)
+    if ui3d2d.isHovering( (self.frameW * .5)-(btnW * .5), (self.frameH * .5)-(btnH * .5), btnW, btnH ) then
+        if ui3d2d.isPressing() then
+            btnColor = Color( 53, 53, 53)
+            if ui3d2d.isPressed() then
+                // Open the GUI to request a vehicle
+                HALOARMORY.Requisition.Open( self:GetFrequency() )
+            end
+        else
+            btnColor = Color( 92, 92, 92)
+        end
+    end
+    draw.RoundedBox( 0, (self.frameW * .5)-(btnW * .5), (self.frameH * .5)-(btnH * .5), btnW, btnH, btnColor )
+    draw.DrawText( "Request Vehicle", "HK_QuanticoHeader",self.frameW * .5, (self.frameH * .5)-(btnH * .3), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+end
