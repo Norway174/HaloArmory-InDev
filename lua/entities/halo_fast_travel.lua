@@ -11,12 +11,15 @@ ENT.Spawnable = true
 
 ENT.Editable = true
 
+local CONSTS = {
+    NETWORK = "HALOARMORY.FASTTRAVEL",
+    ACTIONS = {
+        TELEPORT = 1,
+        SYNC = 2,
+    },
+}
 
 local Destinations = {}
-
-if SERVER then
-    util.AddNetworkString( "HALOARMORY.FASTTRAVEL" )
-end
 
 
 function ENT:SetupDataTables()
@@ -63,6 +66,10 @@ function ENT:UpdateDestinations( RemoveDestination )
 end
 
 function ENT:PreInit()
+    if SERVER then
+        self:AddEFlags( EFL_FORCE_CHECK_TRANSMIT )
+        self:AddEFlags( EFL_IN_SKYBOX )
+    end
 
     self:UpdateDestinations()
 
@@ -73,53 +80,76 @@ function ENT:PreInit()
 end
 
 if SERVER then
-    
-net.Receive( "HALOARMORY.FASTTRAVEL", function( len, ply )
 
-    local ent = net.ReadEntity()
+    util.AddNetworkString( CONSTS.NETWORK )
 
-    if not IsValid( ent ) then return end
-    if ent:GetEnabled() == false then return end
-    if not ply:Alive() then return end
-    if ply:InVehicle() then return end
+    net.Receive( CONSTS.NETWORK, function( len, ply )
 
-    ply:ScreenFade( SCREENFADE.OUT, Color( 0, 0, 0 ), 1, 1 )
+        local action = net.ReadUInt( 8 )
 
-    timer.Simple( 1, function()
+        if action == CONSTS.ACTIONS.TELEPORT then
+            local ent = net.ReadEntity()
 
-        if not IsValid( ply ) then return end
-
-        // Find a suitable position to spawn the player, in front of the screen
-        local spawn_pos = ent:GetPos() + (ent:GetForward() * -50) + (ent:GetUp() * 50)
-
-        local tr = util.TraceLine( {
-            start = spawn_pos,
-            endpos = spawn_pos + Vector( 0, 0, -1000 ),
-            filter = function( ent2 ) if ( ent2:GetClass() == "prop_physics" ) then return true end end
-        } )
-
-        if tr.Hit then
-            spawn_pos = tr.HitPos + tr.HitNormal * 16
+            if not IsValid( ent ) then return end
+            ent:TeleportPlayer( ply )
         end
 
-        ply:SetPos( spawn_pos )
-
-        // Face the player towards the screen, except for up and down.
-        local ang = ent:GetAngles()
-        ang.p = 0
-        ang.r = 0
-        ply:SetEyeAngles( ang )
-
-        ply:ScreenFade( SCREENFADE.IN, Color( 0, 0, 0 ), 1, 1 )
-
     end )
-
-end )
 
     function ENT:UpdateTransmitState()
         return TRANSMIT_ALWAYS
     end
 
+end
+
+
+function ENT:TeleportPlayer( ply )
+
+    if SERVER then // SERVER
+
+        if self:GetEnabled() == false then return end
+        if not ply:Alive() then return end
+        if ply:InVehicle() then return end
+
+        ply:ScreenFade( SCREENFADE.OUT, Color( 0, 0, 0 ), 1, 1 )
+
+        timer.Simple( 1, function()
+
+            if not IsValid( ply ) then return end
+
+            // Find a suitable position to spawn the player, in front of the screen
+            local spawn_pos = self:GetPos() + (self:GetForward() * -50) + (self:GetUp() * 50)
+
+            local tr = util.TraceLine( {
+                start = spawn_pos,
+                endpos = spawn_pos + Vector( 0, 0, -1000 ),
+                filter = function( ent2 ) if ( ent2:GetClass() == "prop_physics" ) then return true end end
+            } )
+
+            if tr.Hit then
+                spawn_pos = tr.HitPos + tr.HitNormal * 16
+            end
+
+            ply:SetPos( spawn_pos )
+
+            // Face the player towards the screen, except for up and down.
+            local ang = self:GetAngles()
+            ang.p = 0
+            ang.r = 0
+            ply:SetEyeAngles( ang )
+
+            ply:ScreenFade( SCREENFADE.IN, Color( 0, 0, 0 ), 1, 1 )
+
+        end )
+
+    else // CLIENT
+        // Maybe add some checks here to make sure the player is in range of the screen?
+
+        net.Start( CONSTS.NETWORK )
+            net.WriteUInt( CONSTS.ACTIONS.TELEPORT, 8 )
+            net.WriteEntity( self )
+        net.SendToServer()
+    end
 end
 
 
@@ -193,9 +223,9 @@ if CLIENT then
                     //print( "Travel to destination: " .. EnabledDestinations[index]:GetDestination() )
                     surface.PlaySound( "buttons/button24.wav" )
 
-                    net.Start( "HALOARMORY.FASTTRAVEL" )
-                        net.WriteEntity( EnabledDestinations[index] )
-                    net.SendToServer()
+                    if EnabledDestinations[index].TeleportPlayer then
+                        EnabledDestinations[index]:TeleportPlayer( LocalPlayer() )
+                    end
                 end
 
                 surface.DrawRect( x, y + ((index - start_index) * row_height), w, row_height )
