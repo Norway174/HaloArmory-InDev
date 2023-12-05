@@ -27,7 +27,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: garrysmod/addons/halorp-armory/
-        dry-run: true
+        dry-run: false
         exclude: |
           **/.git*
           **/.git*/**
