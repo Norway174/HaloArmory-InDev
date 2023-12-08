@@ -116,12 +116,13 @@ hook.Add( "HUDPaint", CARGOHUD_HOOK, CheckVehicleCargo )
 ##============================##
  ]]
 
-local function ContextButton( window, name, icon, callback_func )
+local function ContextButton( window, name, icon, callback_func, callback_text )
     local button = vgui.Create( "DButton", window )
     button:SetText( "" )
     button:SetSize( 80, 80 )
     button:Dock( LEFT )
     button:DockMargin( 0, 0, 0, 0 )
+    button.SetCustomName = name
 
     button.Paint = function( self, w, h )
         // Draw the icon
@@ -130,11 +131,16 @@ local function ContextButton( window, name, icon, callback_func )
         surface.DrawTexturedRect( (w * .5) - 32, 0, 64, 64 )
 
         // Draw the name
-        draw.SimpleText( name, "DermaDefault", w * .5, 70, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( self.SetCustomName, "DermaDefault", w * .5, 70, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     button.DoClick = function()
         callback_func()
+    end
+
+    button.Think = function()
+        if not callback_text then return end
+        button.SetCustomName = callback_text()
     end
 
 end
@@ -179,7 +185,10 @@ local function ContextWindow( icon, window )
     // 4th Button to call the Concomand.
     ContextButton( window, "Toggle HUD", "vgui/haloarmory/icons/globe.png", function()
         RunConsoleCommand( "VEHICLE.PickupHUD" )
-        --surface.PlaySound( "buttons/button6.wav" )
+        surface.PlaySound( "buttons/button24.wav" )
+    end,
+    function()
+        return hook.GetTable()["PostDrawOpaqueRenderables"][PICKUPBOUNDS_HOOK] and "Disable HUD" or "Enable HUD"
     end )
 
 end
@@ -187,7 +196,7 @@ end
 list.Set( "DesktopWindows", "HALOARMORY.VehiclePickup", {
     title		= "Vehicle Cargo",
     icon		= "vgui/haloarmory/icons/package.png",
-    width		= 80 * 3,
+    width		= 80 * 4,
     height		= 84,
     onewindow	= true,
     init		= ContextWindow
