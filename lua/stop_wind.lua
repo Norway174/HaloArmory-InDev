@@ -1,5 +1,7 @@
 
 
+// This was an attempt at getting the HL2 weapons table.
+
 -- print("Update wep changes hook monitor")
 
 -- // "wep" is a global defined variable, that is used to store the current weapon.
@@ -44,9 +46,7 @@
 
 
 
-
-
-
+// This was an attempt at trying to remove the wind sound from the map (gm_fork), but it didn't work.
 
 --Entity( 635 ):Remove()
 
