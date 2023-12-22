@@ -20,17 +20,12 @@ local Destinations = {}
 
 
 function ENT:PreInit()
-
     Destinations[ self:EntIndex() ] = self
-
     self:NetSync()
-
 end
 
 function ENT:OnRemove()
-    print("Removed destination ", self:EntIndex())
     Destinations[ self:EntIndex() ] = nil
-
     self:NetSync()
 end
 
