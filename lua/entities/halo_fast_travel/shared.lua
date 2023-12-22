@@ -49,3 +49,30 @@ function ENT:SetupDataTables()
     end
 
 end
+
+ENT.FastTravelScreen = true
+
+properties.Add( "update_destinations", {
+    MenuLabel = "Refresh Destinations", -- Name to display on the context menu
+    Order = 10001, -- The order to display this property relative to other properties
+    MenuIcon = "icon16/arrow_refresh.png", -- The icon to display next to the property
+    PrependSpacer = true, -- Prepend a spacer between this one and the one before it
+    Filter = function( self, ent, ply ) -- A function that determines whether an entity is valid for this property
+        if ( !IsValid( ent ) ) then return false end
+        return ent.FastTravelScreen or false
+    end,
+    Action = function( self, ent ) -- The action to perform upon using the property ( Clientside )
+
+        self:MsgStart()
+            net.WriteEntity( ent )
+        self:MsgEnd()
+
+    end,
+    Receive = function( self, length, ply ) -- The action to perform upon using the property ( Serverside )
+        local ent = net.ReadEntity()
+
+        if ( !self:Filter( ent, ply ) ) then return end
+
+        ent:NetSyncAll()
+    end 
+} )
