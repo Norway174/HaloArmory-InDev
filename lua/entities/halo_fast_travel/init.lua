@@ -77,7 +77,7 @@ function ENT:NetSync()
     if Destinations[ self:EntIndex() ] == nil then
         // This is a removal
         net.WriteUInt( CONSTS.ACTIONS.REMOVE, 8 )
-        net.WriteUInt( self:EntIndex(), 8 )
+        net.WriteUInt( self:EntIndex(), 13 )
     else
         net.WriteUInt( CONSTS.ACTIONS.SYNC, 8 )
         self:NetBuilder()
@@ -101,7 +101,7 @@ function ENT:NetSyncAll()
 end
 
 function ENT:NetBuilder()
-    net.WriteUInt( self:EntIndex(), 8 ) //ID
+    net.WriteUInt( self:EntIndex(), 13 ) //ID
     net.WriteString( self:GetDestination() ) //Destination
     net.WriteBool( self:GetEnabled() ) //Enabled
     net.WriteEntity( self ) //Entity
@@ -115,7 +115,7 @@ net.Receive( CONSTS.NETWORK, function( len, ply )
 
 
     if action == CONSTS.ACTIONS.TELEPORT then
-        local ent_id = net.ReadUInt( 8 )
+        local ent_id = net.ReadUInt( 13 )
 
         if not Destinations[ent_id] and not IsValid(Destinations[ent_id]) then return end
         Destinations[ent_id]:TeleportPlayer( ply )

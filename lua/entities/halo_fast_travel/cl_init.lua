@@ -23,7 +23,7 @@ net.Receive(CONSTS.NETWORK, function()
         Destinations = {}
 
         for i = 1, count do
-            local id = net.ReadUInt(8)
+            local id = net.ReadUInt(13)
             local dest_tmp = {}
 
             dest_tmp.ID = id
@@ -36,7 +36,7 @@ net.Receive(CONSTS.NETWORK, function()
         end
 
     elseif action == CONSTS.ACTIONS.SYNC then
-        local id = net.ReadUInt(8)
+        local id = net.ReadUInt(13)
 
         Destinations[id] = {}
 
@@ -47,7 +47,7 @@ net.Receive(CONSTS.NETWORK, function()
         Destinations[id].Pos = net.ReadVector()
 
     elseif action == CONSTS.ACTIONS.REMOVE then
-        local id = net.ReadUInt(8)
+        local id = net.ReadUInt(13)
 
         Destinations[id] = nil
     end
@@ -123,7 +123,7 @@ function ENT:DrawDestinationsList(x, y, w, h)
 
                 net.Start( CONSTS.NETWORK )
                     net.WriteUInt( CONSTS.ACTIONS.TELEPORT, 8 )
-                    net.WriteUInt( EnabledDestinations[index].ID, 8 )
+                    net.WriteUInt( EnabledDestinations[index].ID, 13 )
                 net.SendToServer()
             end
 
