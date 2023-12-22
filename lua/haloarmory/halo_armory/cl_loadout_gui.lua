@@ -354,8 +354,8 @@ function HALOARMORY.ARMORY.Open()
             draw.SimpleText("Apply", "HALO_Armory_Font", w / 2, h / 2, HALOARMORY.ARMORY.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
         ApplyButton.DoClick = function()
-            print("Sending weapons:")
-            PrintTable(listOfWeapons)
+            --print("Sending weapons:")
+            --PrintTable(listOfWeapons)
 
             HALOARMORY.ARMORY.ApplyWeapons( ply, listOfWeapons )
             surface.PlaySound( "items/ammo_pickup.wav" ) 
