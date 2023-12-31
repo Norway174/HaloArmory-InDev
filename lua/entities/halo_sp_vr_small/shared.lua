@@ -14,6 +14,7 @@ ENT.HALOARMORY_Device = true
 ENT.DeviceName = "Vehicle Requisition Small"
 ENT.DeviceType = "vehicle_requisition_small"
 
+ENT.VehiclePad = true
 ENT.VehicleSize = { "small" }
 
 ENT.VehicleQueue = {}
