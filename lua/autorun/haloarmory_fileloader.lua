@@ -17,7 +17,7 @@ local loadFolders = {
     --"haloarmory/halo_npcs", -- Experimental NPCs. Didn't work.
     "haloarmory/vehicle_pickup", -- Adds the ability to pick up vehicles/items and supplies, with Pelicans or other vehicles.
     --"haloarmory/halo_redux", -- Used for the infmap. Experimental. Speeds up Pelicans flights.
-    "haloarmory/halo_vehicles", -- Adds the ability to spawn vehicles.
+    "haloarmory/halo_requisition", -- Adds the ability to requisition vehicles.
 }
 
 local ignoreFiles = {}
