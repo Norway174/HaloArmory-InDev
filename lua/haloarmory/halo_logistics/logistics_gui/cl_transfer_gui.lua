@@ -73,7 +73,7 @@ local function VariableFillCargo_Slider( parent, box, cargo_pallet_ent )
 
         CustomizeMenu_Container.Paint = function(self, w, h)
             // Blur only behind the frame
-            --HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+            --HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
             --draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
         end
 
@@ -94,7 +94,7 @@ local function VariableFillCargo_Slider( parent, box, cargo_pallet_ent )
             if not IsValid( parent ) then CustomizeMenu_Container:Close() end
 
             // Blur only behind the frame
-            HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+            HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
             draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
             --draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )
@@ -755,7 +755,7 @@ function HALOARMORY.Logistics.Main_GUI.Transfer.TransferGUI( ent, _network )
 
     HALOARMORY.Logistics.Main_GUI.Transfer.TransferSuppliesMenu.Paint = function(self, w, h)
         // Blur only behind the frame
-        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+        HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
         draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )

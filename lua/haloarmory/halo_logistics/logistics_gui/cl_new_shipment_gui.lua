@@ -49,7 +49,7 @@ function HALOARMORY.Logistics.Main_GUI.NewShipment.SelectCargo( ent, network, pa
 
     HALOARMORY.Logistics.Main_GUI.CreateCargoMenu.Paint = function(self, w, h)
         // Blur only behind the frame
-        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+        HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
         draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )
@@ -222,7 +222,7 @@ function HALOARMORY.Logistics.Main_GUI.NewShipment.SelectCargo( ent, network, pa
 
             CustomizeMenu_Container.Paint = function(self, w, h)
                 // Blur only behind the frame
-                --HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+                --HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
                 --draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
             end
 
@@ -241,7 +241,7 @@ function HALOARMORY.Logistics.Main_GUI.NewShipment.SelectCargo( ent, network, pa
 
             CustomizeMenu.Paint = function(self, w, h)
                 // Blur only behind the frame
-                HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+                HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
                 draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
                 --draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )
@@ -408,7 +408,7 @@ function HALOARMORY.Logistics.Main_GUI.NewShipment.SelectPallet( ent, network )
 
     HALOARMORY.Logistics.Main_GUI.CreateCargoMenu.Paint = function(self, w, h)
         // Blur only behind the frame
-        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+        HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
         draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )

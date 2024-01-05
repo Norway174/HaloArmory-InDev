@@ -28,23 +28,16 @@ local controller_network = controller_network or {
 
 local blur = Material("pp/blurscreen")
 
-function HALOARMORY.Logistics.Main_GUI.RenderBlur(panel, inn, density, alpha, w, h)
+function HALOARMORY.Logistics.Main_GUI.RenderBlur(panel, inn, density, alpha)
 	local x, y = panel:LocalToScreen(0, 0)
-	surface.SetDrawColor(255, 255, 255, alpha)
+    surface.SetDrawColor(255, 255, 255, alpha)
 	surface.SetMaterial(blur)
 
 	for i = 1, 3 do
 		blur:SetFloat("$blur", (i / inn) * density)
 		blur:Recompute()
-		render.UpdateScreenEffectTexture()
-
-		if w and h then
-			render.SetScissorRect(-x, -y, x + w, y + h, true)
-			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
-			render.SetScissorRect(0, 0, 0, 0, false)
-		else
-			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
-		end
+	    render.UpdateScreenEffectTexture()
+        surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -120,7 +113,7 @@ function HALOARMORY.Logistics.Main_GUI.LoadAccessGUI( ent, network )
 
     HALOARMORY.Logistics.Main_GUI.Menu.Paint = function(self, w, h)
         // Blur only behind the frame
-        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250)
         draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 241) )
 
         draw.RoundedBox( 0, 0, 0, w, 25, Color( 0, 0, 0, 241) )
