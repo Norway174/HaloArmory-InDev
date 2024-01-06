@@ -26,7 +26,6 @@ jobs:
         username: ${{ secrets.RONIN_FTP_USERNAME }}
         password: ${{ secrets.RONIN_FTP_PASSWORD }}
         port: ${{ secrets.RONIN_FTP_PORT }}
-        protocol: ftps
         localDir: ./
         remoteDir: garrysmod/addons/nor_halorp-armory/
         dryRun: false
