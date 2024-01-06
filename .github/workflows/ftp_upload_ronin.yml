@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Upload via FTP
+name: Upload via FTP to Ronin
 
 # Controls when the workflow will run
 on:
