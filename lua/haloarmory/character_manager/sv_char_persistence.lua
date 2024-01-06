@@ -6,6 +6,8 @@ HALOARMORY.Character = HALOARMORY.Character or {}
 
 HALOARMORY.Character.Directory = "haloarmory/characters/"
 
+local EnableCharacterCreator = CreateConVar("HALOARMORY.PERSISTENCE.CHAR_CREATOR", "0", FCVAR_ARCHIVE, "Enable the character creator?")
+
 function HALOARMORY.Character.GetCharacter( ply, foldername, fileName )
     if not fileName then fileName = "default" end
     if not foldername then foldername = ply:SteamID64() end
@@ -104,8 +106,12 @@ hook.Add("SetupMove", "HALOARMORY.Character.SVLOAD", function(ply, _, cmd)
                 HALOARMORY.MsgC("[CHARACTER] CHARACTHER PERSISTENCE LOADED FOR " .. ply:Nick() .. ".")
             else
                 // If not, open the character creator
-                --HALOARMORY.Character.OpenCreator( ply )
-                HALOARMORY.MsgC("[CHARACTER] CHARACTHER PERSISTENCE NOT FOUND FOR " .. ply:Nick() .. ". OPENED CREATOR.")
+                if EnableCharacterCreator:GetBool() then
+                    HALOARMORY.Character.OpenCreator( ply )
+                    HALOARMORY.MsgC("[CHARACTER] CHARACTHER PERSISTENCE NOT FOUND FOR " .. ply:Nick() .. ". OPENED CREATOR.")
+                else 
+                    HALOARMORY.MsgC("[CHARACTER] CHARACTHER PERSISTENCE NOT FOUND FOR " .. ply:Nick() .. ". CREATOR DISABLED.")
+                end
             end
             ply.HALOARMORY_CanSave = true
         end)
