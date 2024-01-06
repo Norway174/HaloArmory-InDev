@@ -6,7 +6,9 @@ MsgC( Color(0,255,136), "HALOARMORY Random Fixes loaded!" )
 -- A random fix for Halo Terminals addon
 timer.Simple( 2, function()
 
+
     // Check if the font exists
+    local abort = false
     local success, args = xpcall( function()
         surface.SetFont( "VCREntity" )
     end, function( err )
@@ -17,8 +19,9 @@ timer.Simple( 2, function()
             hook.Remove( "HUDPaint", "TerminalHUD" )
         end
 
-        return
+        abort = true
     end )
+    if abort then return end
 
     local Alpha, DN = 0, "???"
     hook.Add( "HUDPaint", "TerminalHUD", function()
