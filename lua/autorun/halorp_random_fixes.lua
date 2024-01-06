@@ -3,11 +3,22 @@ MsgC( Color(0,255,136), "HALOARMORY Random Fixes loaded!" )
 --resource.AddWorkshop( "2851837932" )
 
 
+local addons = engine.GetAddons()
 
 -- A random fix for Halo Terminals addon
-
+// Add a check to see if the Halo Terminas addon is installed.
 timer.Simple( 2, function()
-    
+
+    local found = false
+    for _, addon in pairs( addons ) do
+        if addon.wsid == "1996765050" then
+            found = true
+            break
+        end
+    end
+
+    if !found then return end
+
     local Alpha, DN = 0, "???"
     hook.Add( "HUDPaint", "TerminalHUD", function()
         local tr = LocalPlayer():GetEyeTrace()
@@ -25,24 +36,29 @@ timer.Simple( 2, function()
 end )
 
 
+timer.Simple( 2, function()
+    // Check if "iv04_nextbot_drop_weapons" exists
+    if !ConVarExists( "iv04_nextbot_drop_weapons" ) then return end
 
--- A random fix for the IV04 Halo Reach NPCs addon.
-if SERVER then
-    local function ToggleIV04DropWeapons()
-        HALOARMORY.MsgC("[HALOARMORY] IV04 Halo Reach Dropweapons fix starting...")
-        timer.Simple(5, function( )
-            RunConsoleCommand( "iv04_nextbot_drop_weapons", "1" )
-
+    -- A random fix for the IV04 Halo Reach NPCs addon.
+    if SERVER then
+        local function ToggleIV04DropWeapons()
+            HALOARMORY.MsgC("[HALOARMORY] IV04 Halo Reach Dropweapons fix starting...")
             timer.Simple(5, function( )
-                RunConsoleCommand( "iv04_nextbot_drop_weapons", "0" )
+                RunConsoleCommand( "iv04_nextbot_drop_weapons", "1" )
 
-                HALOARMORY.MsgC("[HALOARMORY] IV04 Halo Reach Dropweapons fix complete.")
+                timer.Simple(5, function( )
+                    RunConsoleCommand( "iv04_nextbot_drop_weapons", "0" )
+
+                    HALOARMORY.MsgC("[HALOARMORY] IV04 Halo Reach Dropweapons fix complete.")
+                end )
             end )
-        end )
 
 
+        end
+        hook.Add( "Initialize", "HALOARMORY.FIXES.IV04.DropWeaponsFix", ToggleIV04DropWeapons )
+        ToggleIV04DropWeapons()
     end
-    hook.Add( "Initialize", "HALOARMORY.FIXES.IV04.DropWeaponsFix", ToggleIV04DropWeapons )
-    ToggleIV04DropWeapons()
-end
+end )
+
 
