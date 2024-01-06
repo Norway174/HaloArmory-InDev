@@ -28,6 +28,6 @@ jobs:
         port: ${{ secrets.RONIN_FTP_PORT }}
         protocol: ftps
         localDir: ./
-        remoteDir: garrysmod/addons/halorp-armory/
+        remoteDir: garrysmod/addons/nor_halorp-armory/
         dryRun: false
         exclude: '**/.git*,**/.git*/**,**/node_modules/**,README.md'
