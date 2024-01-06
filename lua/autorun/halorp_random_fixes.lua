@@ -3,21 +3,22 @@ MsgC( Color(0,255,136), "HALOARMORY Random Fixes loaded!" )
 --resource.AddWorkshop( "2851837932" )
 
 
-local addons = engine.GetAddons()
-
 -- A random fix for Halo Terminals addon
-// Add a check to see if the Halo Terminas addon is installed.
 timer.Simple( 2, function()
 
-    local found = false
-    for _, addon in pairs( addons ) do
-        if addon.wsid == "1996765050" then
-            found = true
-            break
-        end
-    end
+    // Check if the font exists
+    local success, args = xpcall( function()
+        surface.SetFont( "VCREntity" )
+    end, function( err )
+        MsgC( Color(255,0,0), "[HALOARMORY] ERROR: ", Color(255,255,255), "Font 'VCREntity' not found! Halo Terminals addon is likely not installed. Aborting!" )
 
-    if !found then return end
+        // Remove the hook if it exists
+        if hook.GetTable()["HUDPaint"]["TerminalHUD"] then
+            hook.Remove( "HUDPaint", "TerminalHUD" )
+        end
+
+        return
+    end )
 
     local Alpha, DN = 0, "???"
     hook.Add( "HUDPaint", "TerminalHUD", function()
@@ -28,7 +29,7 @@ timer.Simple( 2, function()
             Alpha = math.Clamp(Alpha + 10, 0 , 255)
             DN = tr.Entity:GetNWString("DN")
         else
-            Alpha = math.Clamp(Alpha - 10, 0 , 255)		
+            Alpha = math.Clamp(Alpha - 10, 0 , 255)
         end
         draw.DrawText( DN, "VCREntity", ScrW() * 0.5, ScrH() * 0.7, Color( 255, 255, 255, Alpha ), TEXT_ALIGN_CENTER )
     end )
