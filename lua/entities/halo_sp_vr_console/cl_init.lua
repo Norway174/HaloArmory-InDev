@@ -2,6 +2,8 @@
 include('shared.lua')
 
 function ENT:Draw3D2D( ent )
+    local ply = ply or LocalPlayer()
+    if not IsValid( ply ) then return end
 
     // Distance check
     if self:GetPos():Distance( ply:GetPos() ) >= 100 then return end
@@ -24,7 +26,7 @@ function ENT:Draw3D2D( ent )
             btnColor = Color( 53, 53, 53)
             if ui3d2d.isPressed() then
                 // Open the GUI to request a vehicle
-                HALOARMORY.Requisition.Open( self:GetFrequency() )
+                --HALOARMORY.Requisition.Open( self:GetPadID() )
             end
         else
             btnColor = Color( 92, 92, 92)

@@ -17,7 +17,9 @@ end
 
 
 
-local function draw_button( ent)
+local function draw_button( ent )
+    local ply = ply or LocalPlayer()
+    if not IsValid( ply ) then return end
 
     if ent:GetPos():Distance( ply:GetPos() ) >= 150 then return end
 
