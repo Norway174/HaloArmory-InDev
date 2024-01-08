@@ -22,8 +22,8 @@ if(CLIENT) then
     function TOOL.BuildCPanel(pnl)
         pnl:AddControl("Header",{Text = "Attacher",Description = [[
 Left-Click to attach a prop to the selected ship.
-Right-Click to select the ship.
-Reload to detach a prop from the selected ship.
+Right-Click to detach a prop from the selected ship.
+Reload to select a ship.
         ]]})
     end
 
