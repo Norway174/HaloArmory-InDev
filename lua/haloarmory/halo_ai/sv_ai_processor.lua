@@ -154,6 +154,8 @@ function HALOARMORY.AI.PromptEngineer( ai_name, cmd, text, ply )
 
         local ai_response = response["choices"][1]["message"]["content"]
 
+        if ai_response == "" then HALOARMORY.MsgC( "AI ERROR: No response: " .. tostring(response) ) return end
+
         if cmd["access"] == "public" then
             net.Start("HALOARMORY.AI")
                 net.WriteString( "chat_output_public" ) -- The action.
