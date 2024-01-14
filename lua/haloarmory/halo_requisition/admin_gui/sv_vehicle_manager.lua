@@ -19,10 +19,9 @@ function HALOARMORY.VEHICLES.ADMIN.SAVEVEHICLE( vehicle_filename, vehicle_table 
 
     local full_path = vehicles_path..vehicle_filename..".json"
 
-    if file.Exists( vehicles_path..vehicle_table["old_filename"]..".json", "DATA" ) then
+    if vehicle_table["old_filename"] and file.Exists( vehicles_path..vehicle_table["old_filename"]..".json", "DATA" ) then
         file.Rename( vehicles_path..vehicle_table["old_filename"]..".json", full_path )
     end
-
     vehicle_table["old_filename"] = nil
 
     // Write file to disk
@@ -79,6 +78,9 @@ function HALOARMORY.VEHICLES.ADMIN.LOADVEHICLES()
         end
 
     end
+
+    --print("Loaded vehicles", #HALOARMORY.VEHICLES.LIST, table.Count( HALOARMORY.VEHICLES.LIST ) )
+    --PrintTable( HALOARMORY.VEHICLES.LIST )
 
 end
 

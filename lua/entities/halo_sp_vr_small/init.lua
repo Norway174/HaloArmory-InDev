@@ -45,14 +45,14 @@ function ENT:Think()
         end
     end
 
-    local closest_ent = nil 
-
     // Sort nearby entities by distance. And return the closest one.
     table.sort( nearby_ent, function( a, b )
         return a:GetPos():Distance( pos ) < b:GetPos():Distance( pos )
     end )
 
-    closest_ent = nearby_ent[1]
+    local closest_ent = nil
+
+    if IsValid(nearby_ent[1]) then closest_ent = nearby_ent[1] end
 
     if self:GetOnPad() ~= closest_ent then
         self:SetOnPad( closest_ent )
@@ -175,5 +175,17 @@ function ENT:SpawnVehicle( ply, vehicle, v_skin, v_loadout )
     end)
 
 
+end
+
+
+function ENT:GetVehicles( ply )
+    // Global vehicle table: HALOARMORY.VEHICLES.LIST
+    // Check the table for any vehicles that match any of the options in self.VehicleSize
+
+    local vehicles = HALOARMORY.VEHICLES.LIST
+
+    // TODO: Complete this function
+
+    return vehicles
 end
 

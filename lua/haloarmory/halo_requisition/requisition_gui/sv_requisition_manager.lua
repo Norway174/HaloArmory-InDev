@@ -83,24 +83,28 @@ function HALOARMORY.Requisition.AuthorizeVehicle( vehiclePad, ply, vehicle, call
                     table.insert( all_players_who_can_authorize, v )
                 end
 
-                // Override if there are no players with the required rank.
-                if #all_players_who_can_authorize == 0 then
-
-                    vehicle["authorization"]["authorized"] = true
-                    vehicle["authorization"]["authorized_by"] = ply
-                    vehicle["authorization"]["authorized_at"] = CurTime()
-
-                    callback(true, "Automatically authorized (No players with the required rank)")
-                    return 
-                end
-
-                // Send the authorization request to all players with the required rank.
-                net.Start( "HALOARMORY.Requisition" )
-                    net.WriteString( "Request-Authorization" )
-                    net.WriteEntity( ply )
-                    net.WriteTable( vehicle )
-                net.Send( all_players_who_can_authorize )
             end
+
+            // Override if there are no players with the required rank.
+            if #all_players_who_can_authorize == 0 then
+
+                vehicle["authorization"]["authorized"] = true
+                vehicle["authorization"]["authorized_by"] = ply
+                vehicle["authorization"]["authorized_at"] = CurTime()
+
+                callback(true, "Automatically authorized (No players with the required rank)")
+                return 
+            end
+
+            // Send the authorization request to all players with the required rank.
+            // TODO:
+            // * Use the Shared Networking.lua file to send the authorization request.
+            // * Create a menu for the players to accept or deny the authorization request.
+            -- net.Start( "HALOARMORY.Requisition" )
+            --     net.WriteString( "Request-Authorization" )
+            --     net.WriteEntity( ply )
+            --     net.WriteTable( vehicle )
+            -- net.Send( all_players_who_can_authorize )
 
             return 
         end

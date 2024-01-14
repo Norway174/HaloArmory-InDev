@@ -3,6 +3,8 @@ HALOARMORY.MsgC("VEHICLE Selection GUI Loaded")
 HALOARMORY.VEHICLES = HALOARMORY.VEHICLES or {}
 HALOARMORY.VEHICLES.ADMIN_GUI = HALOARMORY.VEHICLES.ADMIN_GUI or {}
 
+local NewVehicle = true
+
 local NewTemplateVehicle = {
     ["filename"] = "my_vehicle",
     ["entity"] = "sim_fphys_halo_warthog_chaingun",
@@ -131,7 +133,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
     ModelPanel:SetCamPos( Vector( 134, 100, 100) )
     ModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
-    ModelPanel:SetFOV( 90 )
+    ModelPanel:SetFOV( 120 )
 
     function ModelPanel:LayoutEntity( Entity )
     end
@@ -232,9 +234,6 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
     RightSidePreviewControls.Paint = function( self, w, h )
         --draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
     end
-
-    
-    local ListOfBodygroups = ModelPanel.Entity:GetBodyGroups()
 
     local function RefreshPreviewControls()
 
@@ -703,6 +702,15 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
     local LoadoutBodygroupsScrollbar = vgui.Create("DScrollPanel", LoadoutTabBodygroups)
     LoadoutBodygroupsScrollbar:Dock( FILL )
 
+    local ListOfBodygroups = ModelPanel.Entity:GetBodyGroups()
+
+    // Remove any bodygroups from the VehicleBeingEdited["bodygroups"] table that are not in the ListOfBodygroups table.
+    for key, value in pairs( VehicleBeingEdited["bodygroups"] ) do
+        if not ListOfBodygroups[key] then
+            VehicleBeingEdited["bodygroups"][key] = nil
+            print( "Removed bodygroup:", key )
+        end
+    end
 
     for key, value in pairs( ListOfBodygroups ) do
         local BodygroupNumber = value["num"] - 1
@@ -771,6 +779,10 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
             local BodygroupSubPanel = vgui.Create("DCheckBox", BodygroupTileLayout)
             local size = BodygroupTileLayout:GetBaseSize()
             BodygroupSubPanel:SetSize( size, size )
+
+            if not VehicleBeingEdited["bodygroups"][value["name"]] then
+                VehicleBeingEdited["bodygroups"][value["name"]] = { 0 }
+            end
 
             BodygroupSubPanel:SetChecked( table.HasValue(VehicleBeingEdited["bodygroups"][value["name"]], i - 1) or false )
 
@@ -855,7 +867,10 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( The_Vehicle )
     VehicleFileNameTextEntry:Dock( FILL )
     VehicleFileNameTextEntry:SetValue( tostring( VehicleBeingEdited["filename"] ) )
 
-    VehicleBeingEdited["old_filename"] = VehicleBeingEdited["filename"]
+    if not NewVehicle then
+        VehicleBeingEdited["old_filename"] = VehicleBeingEdited["filename"]
+    end
+    
 
     // DIVIDER
     local Divider = vgui.Create("DPanel", MainFrame)
@@ -1119,6 +1134,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( The_Vehicle )
         else
             VehicleSaveButton:SetDisabled( true )
         end
+
     end
 
 
@@ -1276,6 +1292,8 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
 
     AddVehicleButton.DoClick = function()
 
+        NewVehicle = true
+
         HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor()
 
     end
@@ -1345,6 +1363,8 @@ net.Receive("HALOARMORY.VEHICLES.ADMIN", function(len, ply)
 
         --local VehicleName = net.ReadString()
         local VehicleTable = net.ReadTable()
+
+        NewVehicle = false
 
         HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( VehicleTable )
 

@@ -1,0 +1,21 @@
+HALOARMORY.MsgC("Shared Vehicle Config Loaded!")
+
+HALOARMORY.VEHICLES = HALOARMORY.VEHICLES or {}
+
+if SERVER then
+    // Load vehicles server side
+    HALOARMORY.VEHICLES.ADMIN = HALOARMORY.VEHICLES.ADMIN or {}
+    HALOARMORY.VEHICLES.LIST = HALOARMORY.VEHICLES.LIST or {}
+
+
+    function HALOARMORY.VEHICLES.INIT()
+        HALOARMORY.MsgC("Loading Vehicles...")
+
+        HALOARMORY.VEHICLES.ADMIN.LOADVEHICLES()
+
+        HALOARMORY.MsgC("Loaded Vehicles:", table.Count( HALOARMORY.VEHICLES.LIST ) )
+    end
+
+    hook.Add("InitPostEntity", "HALOARMORY.VEHICLES.INIT", HALOARMORY.VEHICLES.INIT)
+    HALOARMORY.VEHICLES.INIT()
+end

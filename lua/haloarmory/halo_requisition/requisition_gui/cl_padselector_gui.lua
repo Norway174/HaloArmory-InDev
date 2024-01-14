@@ -6,7 +6,7 @@ HALOARMORY.Requisition.Vehicles = HALOARMORY.Requisition.Vehicles or {}
 HALOARMORY.Requisition.VehiclePads = {}
 HALOARMORY.Requisition.GUI = HALOARMORY.Requisition.GUI or {}
 
-HALOARMORY.Requisition.Theme = {
+HALOARMORY.Requisition.Theme = HALOARMORY.Requisition.Theme or {
     ["roundness"] = 0,
     ["background"] = Color(0,0,0,241),
     ["text"] = Color(255,255,255,255),
@@ -17,7 +17,7 @@ HALOARMORY.Requisition.Theme = {
 }
 
 
-function HALOARMORY.Requisition.OpenPadSelector()
+function HALOARMORY.Requisition.OpenPadSelector( callback )
 
     local MainWindow = vgui.Create( "DFrame" )
     MainWindow:SetSize( 576, 440 )
@@ -27,27 +27,27 @@ function HALOARMORY.Requisition.OpenPadSelector()
     MainWindow:ShowCloseButton( false )
 
     MainWindow.Paint = function( self, w, h )
-        HALOARMORY.Logistics.Main_GUI.RenderBlur(self, 1, 3, 250, w, h)
+        HALOARMORY.Logistics.Main_GUI.RenderBlur( self, 1, 3, 250 )
 
         draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["background"] )
         draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, 40, HALOARMORY.Requisition.Theme["header_color"] )
         draw.SimpleText( "Select a vehicle pad", "QuanticoHeader", w/2, 20, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
-    HALOARMORY.Requisition.GUI.Menu = MainWindow
+    HALOARMORY.Requisition.GUI.PadSelector_Menu = MainWindow
 
     local CloseButton = vgui.Create( "DButton", MainWindow )
     CloseButton:SetSize( 40, 40 )
     CloseButton:SetPos( MainWindow:GetWide() - 40, 0 )
     CloseButton:SetText( "" )
     CloseButton.Paint = function( self, w, h )
-        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(12,12,12) )
+        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["cancel_btn"] )
         draw.SimpleText( "✕", "QuanticoHeader", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     CloseButton.DoClick = function()
         MainWindow:Remove()
-        HALOARMORY.Requisition.GUI.Menu = nil
+        HALOARMORY.Requisition.GUI.PadSelector_Menu = nil
     end
 
     local VehiclePadList = vgui.Create( "DScrollPanel", MainWindow )
@@ -110,7 +110,7 @@ function HALOARMORY.Requisition.OpenPadSelector()
 
             local VehiclePadName = vgui.Create( "DLabel", VehiclePad )
             VehiclePadName:Dock( FILL )
-            VehiclePadName:SetText( tostring( v.DeviceName or v.PrintName ) )
+            VehiclePadName:SetText( tostring( v:GetDeviceName() ) )
             VehiclePadName:SetFont( "QuanticoHeader" )
             VehiclePadName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
             VehiclePadName:SetContentAlignment( 5 )
@@ -126,6 +126,12 @@ function HALOARMORY.Requisition.OpenPadSelector()
 
             VehiclePadButton.DoClick = function()
                 --HALOARMORY.Requisition.OpenVehicleSelector( v )
+
+                if callback and isfunction( callback ) then
+                    callback( v )
+                end
+
+                MainWindow:Remove()
             end
             
         end
@@ -137,13 +143,13 @@ function HALOARMORY.Requisition.OpenPadSelector()
 end
 
 
-concommand.Add("haloarmory_requisition", function() 
+concommand.Add("haloarmory_padselector", function() 
     HALOARMORY.Requisition.OpenPadSelector()
 end)
 
-if HALOARMORY.Requisition.GUI.Menu then
-    HALOARMORY.Requisition.GUI.Menu:Remove()
-    HALOARMORY.Requisition.GUI.Menu = nil
+if HALOARMORY.Requisition.GUI.PadSelector_Menu then
+    HALOARMORY.Requisition.GUI.PadSelector_Menu:Remove()
+    HALOARMORY.Requisition.GUI.PadSelector_Menu = nil
 
     HALOARMORY.Requisition.OpenPadSelector()
 end
