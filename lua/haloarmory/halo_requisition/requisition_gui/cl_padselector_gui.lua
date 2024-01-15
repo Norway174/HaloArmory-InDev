@@ -129,6 +129,8 @@ function HALOARMORY.Requisition.OpenPadSelector( callback )
 
                 if callback and isfunction( callback ) then
                     callback( v )
+                else
+                    HALOARMORY.Requisition.OpenVehiclePad( v )
                 end
 
                 MainWindow:Remove()
