@@ -27,6 +27,7 @@ function ENT:Draw3D2D( ent )
             if ui3d2d.isPressed() then
                 // Open the GUI to request a vehicle
                 --HALOARMORY.Requisition.Open( self:GetPadID() )
+                RunConsoleCommand( "haloarmory_padselector" )
             end
         else
             btnColor = Color( 92, 92, 92)
