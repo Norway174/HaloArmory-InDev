@@ -261,7 +261,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 print("Selected vehicle", v["entity"])
                 --HALOARMORY.Requisition.SpawnVehicle( v["entity"], PadEnt )
 
-                CenterPanel:SelectVehicle( v )
+                CenterPanel.SelectVehicle( v )
             end
 
 
@@ -364,7 +364,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     SelectVehiclePlaceholder:SetTall( 200 )
 
 
-    function CenterPanel:SelectVehicle( vehicle )
+    function CenterPanel.SelectVehicle( vehicle )
         SelectedVehicleContainer:Clear()
 
 
