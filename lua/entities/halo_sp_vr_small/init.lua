@@ -33,6 +33,8 @@ function ENT:Think()
         if v == self then continue end
         if v.HALOARMORY_Ships_Presets then continue end
 
+        --print( "Found:", v:GetClass() )
+
         local Vehicle_Ent = scripted_ents.Get( v:GetClass() )
 
         if not Vehicle_Ent then
