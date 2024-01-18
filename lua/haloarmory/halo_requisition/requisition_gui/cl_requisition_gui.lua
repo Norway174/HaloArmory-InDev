@@ -671,8 +671,94 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             end
         end
 
+    end
 
 
+
+    // Create a Queue Header on the right panel
+    local QueueHeader = vgui.Create("DLabel", RightPanel)
+    QueueHeader:SetText("Queue")
+    QueueHeader:SetFont("QuanticoHeader")
+    QueueHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    QueueHeader:Dock(TOP)
+    QueueHeader:DockMargin(5,15,5,0)
+    QueueHeader:SetContentAlignment(5)
+
+
+    // Create a top panel to dislay if anything is currently on the pad.
+    // Network: "OnPad"
+    local QueueOnPadPanel = vgui.Create("DPanel", RightPanel)
+    QueueOnPadPanel:Dock(TOP)
+    QueueOnPadPanel:SetTall( 75 )
+
+    QueueOnPadPanel.OnPadEnt = nil
+
+    QueueOnPadPanel.Paint = function(self, w, h)
+        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(136,86,12,125) )
+
+        --draw.SimpleText( tostring( self.OnPadEnt ), "QuanticoHeader", w/2, 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+    end
+
+    local lastTickEnt = nil
+    QueueOnPadPanel.Think = function(self)
+        
+        QueueOnPadPanel.OnPadEnt = PadEnt:GetOnPad()
+
+        if IsValid(QueueOnPadPanel.OnPadEnt) and (QueueOnPadPanel.OnPadEnt ~= lastTickEnt) then
+            QueueOnPadPanel:Clear()
+            print("OnPadEnt changed", QueueOnPadPanel.OnPadEnt)
+
+            // Display the vehicle model
+            local VehicleModelPanel = vgui.Create("DModelPanel", QueueOnPadPanel)
+            VehicleModelPanel:Dock(LEFT)
+            VehicleModelPanel:SetWide( 100 )
+
+            VehicleModelPanel:SetModel( QueueOnPadPanel.OnPadEnt:GetModel() or "Error" )
+
+            VehicleModelPanel:SetCamPos( Vector( 134, 100, 100) )
+            VehicleModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
+            VehicleModelPanel:SetFOV( 90 )
+
+            function VehicleModelPanel:LayoutEntity( Entity )
+            end
+
+            // Create a label with the vehicle name
+            local VehicleName = vgui.Create("DLabel", QueueOnPadPanel)
+            VehicleName:SetText( tostring( QueueOnPadPanel.OnPadEnt.PrintName ) )
+            VehicleName:SetFont("QuanticoNormal")
+            VehicleName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+            VehicleName:Dock(FILL)
+            VehicleName:DockMargin(5,5,5,0)
+            VehicleName:SetContentAlignment(7)
+
+
+            // Add a button to reclaim the vehicle
+            local ReclaimButton = vgui.Create("DButton", QueueOnPadPanel)
+            ReclaimButton:SetText("")
+            ReclaimButton:SetFont("QuanticoNormal")
+            ReclaimButton:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+            ReclaimButton:Dock(BOTTOM)
+            ReclaimButton:DockMargin(5,5,5,5)
+
+            ReclaimButton.Paint = function(self, w, h)
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["apply_btn"] )
+                if self:IsHovered() then
+                    draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+                end
+
+                draw.SimpleText( "Reclaim", "QuanticoNormal", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+
+            ReclaimButton.DoClick = function()
+                print("Reclaiming vehicle", QueueOnPadPanel.OnPadEnt)
+                --HALOARMORY.Requisition.ReclaimVehicle( QueueOnPadPanel.OnPadEnt )
+            end
+
+        elseif !IsValid(QueueOnPadPanel.OnPadEnt) then
+            QueueOnPadPanel:Clear()
+        end
+
+        lastTickEnt = QueueOnPadPanel.OnPadEnt
 
     end
 
