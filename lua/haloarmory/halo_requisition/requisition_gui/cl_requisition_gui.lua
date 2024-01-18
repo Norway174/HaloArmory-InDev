@@ -260,6 +260,8 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             SelectVehicle.DoClick = function()
                 print("Selected vehicle", v["entity"])
                 --HALOARMORY.Requisition.SpawnVehicle( v["entity"], PadEnt )
+
+                CenterPanel:SelectVehicle( v )
             end
 
 
@@ -287,6 +289,8 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     NetworkName:DockMargin(5,5,5,0)
     NetworkName:SetContentAlignment(5)
 
+    NetworkName.Cost = 0
+
     NetworkName.Paint = function(self, w, h)
         local label = "Network: "
         draw.SimpleText( label, self:GetFont(), 5, 0, Color(189,189,189), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
@@ -307,19 +311,370 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
             local CurrentResource, MaxResource = controller_network.Supplies, controller_network.MaxSupplies
 
+            // Calculate the progress and the cost progress
             local Progress = CurrentResource / MaxResource
+            local ProgressCost = NetworkName.Cost / MaxResource
 
             local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
 
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, LerpColor )
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * (Progress - ProgressCost), 30, LerpColor )
 
-            draw.SimpleText( "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource), self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+            // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(133, 18, 18, 210) )
+
+            local supplies_text = "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource)
+
+            if NetworkName.Cost ~= 0 then
+                supplies_text = supplies_text .. " ( " .. HALOARMORY.INTERFACE.PrettyFormatNumber( -NetworkName.Cost ) .. " )"
+            end
+
+            draw.SimpleText( supplies_text, self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
         
         end
 
     end
 
 
+    // Display a header "Selected Vehicle"
+    local SelectVehicleHeader = vgui.Create("DLabel", CenterPanel)
+    SelectVehicleHeader:SetText("Selected Vehicle")
+    SelectVehicleHeader:SetFont("QuanticoHeader")
+    SelectVehicleHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    SelectVehicleHeader:Dock(TOP)
+    SelectVehicleHeader:DockMargin(5,15,5,0)
+
+    // Create a Select Vehicle container
+    local SelectedVehicleContainer = vgui.Create("DPanel", CenterPanel)
+    SelectedVehicleContainer:Dock(FILL)
+    SelectedVehicleContainer:DockMargin(5,5,5,5)
+
+    SelectedVehicleContainer.Paint = function(self, w, h)
+        --draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(20,20,20,148) )
+    end
+
+
+    // Display a placeholder text telling the user to "Select a vehicle"
+    local SelectVehiclePlaceholder = vgui.Create("DLabel", SelectedVehicleContainer)
+    SelectVehiclePlaceholder:SetText("Select a vehicle")
+    SelectVehiclePlaceholder:SetFont("QuanticoNormal")
+    SelectVehiclePlaceholder:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    SelectVehiclePlaceholder:SetContentAlignment(5)
+    SelectVehiclePlaceholder:Dock(TOP)
+    SelectVehiclePlaceholder:DockMargin(5,5,5,0)
+    SelectVehiclePlaceholder:SetTall( 200 )
+
+
+    function CenterPanel:SelectVehicle( vehicle )
+        SelectedVehicleContainer:Clear()
+
+
+        local VehicleClass = vehicle["entity"]
+
+        --print( VehicleClass )
+
+        if VehicleClass == "" then return end
+
+        local Vehicle_Ent = scripted_ents.Get( VehicleClass )
+
+        if Vehicle_Ent == nil then
+            // Might be Simfphys
+            Vehicle_Ent = list.Get("simfphys_vehicles")[VehicleClass]
+        end
+
+        --print( Vehicle_Ent )
+
+        if not Vehicle_Ent then return end
+
+        local VehiclePrintName = Vehicle_Ent.PrintName or Vehicle_Ent.Name
+        local VehicleModel = Vehicle_Ent.Model or Vehicle_Ent.MDL
+
+        --print( VehiclePrintName, VehicleModel )
+
+        // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
+        if not string.EndsWith( VehicleModel, ".mdl" ) then return end
+
+        NetworkName.Cost = vehicle["cost"] or 0
+
+        print("Selected vehicle", vehicle)
+        if istable(vehicle) then
+            PrintTable(vehicle)
+        end
+
+
+        // Create a Header to display the vehicle name
+        local VehicleName = vgui.Create("DLabel", SelectedVehicleContainer)
+        VehicleName:SetText( tostring( VehiclePrintName ) )
+        VehicleName:SetFont("QuanticoHeader")
+        VehicleName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        VehicleName:Dock(TOP)
+        VehicleName:DockMargin(5,5,5,0)
+        VehicleName:SetContentAlignment(5)
+
+        -- Draw a model panel
+        local ModelPanel = vgui.Create("DAdjustableModelPanel", SelectedVehicleContainer)
+        ModelPanel:Dock(FILL)
+        ModelPanel:SetModel(VehicleModel)
+        --ModelPanel:SetColor(SelectedVehicle["color"])
+
+        ModelPanel:SetCamPos( Vector( 134, 100, 100) )
+        ModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
+        ModelPanel:SetFOV( 120 )
+
+        function ModelPanel:LayoutEntity( Entity )
+        end
+
+        function ModelPanel:OnMousePressed( mousecode )
+
+            self:SetCursor( "none" )
+            self:MouseCapture( true )
+            self.Capturing = true
+            self.MouseKey = mousecode
+
+            if ( self.MouseKey ~= MOUSE_LEFT ) then return end
+            self:SetFirstPerson( true )
+            self:CaptureMouse()
+        
+            -- Helpers for the orbit movement
+            local mins, maxs = self.Entity:GetModelBounds()
+            local center = ( mins + maxs ) / 2
+        
+            self.OrbitPoint = center
+            self.OrbitDistance = ( self.OrbitPoint - self.vCamPos ):Length()
+        end
+        
+
+        function ModelPanel:FirstPersonControls()
+            local x, y = self:CaptureMouse()
+            local scale = self:GetFOV() / 180
+            x = x * -0.5 * scale
+            y = y * 0.5 * scale
+        
+            if ( self.MouseKey ~= MOUSE_LEFT ) then return end
+            if ( input.IsShiftDown() ) then y = 0 end
+
+            self.aLookAngle = self.aLookAngle + Angle( y * 4, x * 4, 0 )
+            self.vCamPos = self.OrbitPoint - self.aLookAngle:Forward() * self.OrbitDistance
+        end
+
+        local ModelPanel_ent = ModelPanel.Entity
+
+        // Create a bottom panel for 3 columns of options.
+        // Color & Skin | Bodygroups | Spawn
+
+        local BottomPanel = vgui.Create("DPanel", SelectedVehicleContainer)
+        BottomPanel:Dock(BOTTOM)
+        BottomPanel:SetTall( 150 )
+
+        BottomPanel.Paint = function(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,125) )
+        end
+
+        local ColorSkinBodygroupPanel = vgui.Create("DPanel", BottomPanel)
+        ColorSkinBodygroupPanel:Dock(FILL)
+
+        local ColorSkinPanel = vgui.Create("DPanel", ColorSkinBodygroupPanel)
+        ColorSkinPanel:Dock(LEFT)
+        ColorSkinPanel:SetWide( 150 )
+
+        local BodygroupPanel = vgui.Create("DPanel", ColorSkinBodygroupPanel)
+        BodygroupPanel:Dock(FILL)
+
+        local SpawnButtonPanel = vgui.Create("DPanel", BottomPanel)
+        SpawnButtonPanel:Dock(RIGHT)
+        SpawnButtonPanel:SetWide( 150 )
+
+
+        // Set the Margins
+        ColorSkinPanel:DockMargin(0,0,5,0)
+        BodygroupPanel:DockMargin(0,0,5,0)
+        SpawnButtonPanel:DockMargin(0,0,0,0)
+
+
+        local function PaintThePanels(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,125) )
+        end
+
+        ColorSkinBodygroupPanel.Paint = function(self, w, h) end
+        ColorSkinPanel.Paint = PaintThePanels
+        BodygroupPanel.Paint = PaintThePanels
+        SpawnButtonPanel.Paint = PaintThePanels
+
+
+        // Color and Skin Panel
+
+        local ColorOptionHeader = vgui.Create("DLabel", ColorSkinPanel)
+        ColorOptionHeader:SetText("Color")
+        ColorOptionHeader:SetFont("QuanticoNormal")
+        ColorOptionHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        ColorOptionHeader:Dock(TOP)
+        ColorOptionHeader:DockMargin(5,5,5,0)
+
+        local ColorOptionDropDown = vgui.Create("DComboBox", ColorSkinPanel)
+        ColorOptionDropDown:SetValue( vehicle["defaults"]["color"] )
+        ColorOptionDropDown:Dock(TOP)
+        ColorOptionDropDown:DockMargin(5,5,5,5)
+
+        for k, v in pairs( vehicle["colors"] ) do
+            ColorOptionDropDown:AddChoice( k )
+        end
+
+        ColorOptionDropDown.Paint = function(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(20,20,20,148) )
+            if self:IsHovered() then
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+            end
+        end
+
+
+        // Set the default color
+        local function UpdateColor()
+            local color = vehicle["colors"][ColorOptionDropDown:GetValue()]
+            color = Color( color.r, color.g, color.b, 255 )
+            ModelPanel:SetColor( color )
+        end
+
+        UpdateColor()
+        ColorOptionDropDown.OnSelect = UpdateColor
+
+
+        local SkinOptionHeader = vgui.Create("DLabel", ColorSkinPanel)
+        SkinOptionHeader:SetText("Skin")
+        SkinOptionHeader:SetFont("QuanticoNormal")
+        SkinOptionHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        SkinOptionHeader:Dock(TOP)
+        SkinOptionHeader:DockMargin(5,5,5,0)
+
+        local SkinOptionDropDown = vgui.Create("DComboBox", ColorSkinPanel)
+        SkinOptionDropDown:SetValue( vehicle["defaults"]["skin"] )
+        SkinOptionDropDown:Dock(TOP)
+        SkinOptionDropDown:DockMargin(5,5,5,0)
+
+        for k, v in pairs( vehicle["skins"] ) do
+            SkinOptionDropDown:AddChoice( k )
+        end
+
+        SkinOptionDropDown.Paint = function(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(20,20,20,148) )
+            if self:IsHovered() then
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+            end
+        end
+
+        // Set the default skin
+        local function UpdateSkin()
+            ModelPanel.Entity:SetSkin( vehicle["skins"][SkinOptionDropDown:GetValue()] )
+        end
+
+        UpdateSkin()
+        SkinOptionDropDown.OnSelect = UpdateSkin
+
+
+        // Bodygroup Panel
+
+        local BodygroupOptionHeader = vgui.Create("DLabel", BodygroupPanel)
+        BodygroupOptionHeader:SetText("Bodygroups")
+        BodygroupOptionHeader:SetFont("QuanticoNormal")
+        BodygroupOptionHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        BodygroupOptionHeader:Dock(TOP)
+        BodygroupOptionHeader:DockMargin(5,5,5,5)
+
+
+        local LoadoutBodygroupsScrollbar = vgui.Create("DScrollPanel", BodygroupPanel)
+        LoadoutBodygroupsScrollbar:Dock( FILL )
+
+        local ListOfBodygroups = vehicle["bodygroups"]
+
+
+        for key, value in pairs( ListOfBodygroups ) do
+
+            ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), value[1] )
+
+            if table.Count( value ) <= 1 then continue end
+
+            local BodygroupPanel2 = vgui.Create("DPanel", LoadoutBodygroupsScrollbar)
+            BodygroupPanel2:Dock( TOP )
+            BodygroupPanel2:DockMargin( 0, 0, 2, 5 )
+            BodygroupPanel2:SetTall( 60 )
+
+            BodygroupPanel2.Paint = function( self, w, h )
+                draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
+            end
+
+            local BodygroupLabel = vgui.Create("DLabel", BodygroupPanel2)
+            BodygroupLabel:Dock( TOP )
+            BodygroupLabel:SetWide( 250 )
+            BodygroupLabel:SetText( " " .. tostring( key ) )
+
+            
+            // Use DTileLayout with MakeDroppable to allow for reordering of bodygroups.
+            local BodygroupTileLayout = vgui.Create("DTileLayout", BodygroupPanel2)
+            BodygroupTileLayout:Dock( FILL )
+            BodygroupTileLayout:DockMargin( 5, 0, 0, 0 )
+            BodygroupTileLayout:SetBaseSize( 35 )
+            BodygroupTileLayout:SetTall( 50 )
+
+            BodygroupTileLayout:SetSpaceX( 2 )
+            BodygroupTileLayout:SetSpaceY( 2 )
+
+
+            for i = 1, table.Count( value ) do
+
+                local BodygroupSubPanel = vgui.Create("DButton", BodygroupTileLayout)
+                local size = BodygroupTileLayout:GetBaseSize()
+                BodygroupSubPanel:SetSize( size, size )
+
+                BodygroupSubPanel:SetText("")
+
+
+                BodygroupSubPanel.BodygroupNumber = i - 1
+
+                BodygroupSubPanel.Paint = function( self, w, h )
+                    draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
+
+                    local v_ent = ModelPanel.Entity
+                    local current_bodygroup_id = v_ent:FindBodygroupByName( key )
+                    local current_bodygroup = ModelPanel.Entity:GetBodygroup( current_bodygroup_id )
+
+                    if BodygroupSubPanel.BodygroupNumber == current_bodygroup then
+                        draw.RoundedBox( 0, 1, 1, w-2, h-2, Color( 0, 255, 0, 70) )
+                    end
+
+                    draw.SimpleText( BodygroupSubPanel.BodygroupNumber, "DermaDefault", size / 2, size / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                end
+
+                BodygroupSubPanel.DoClick = function(self)
+                    //print("Clicked bodygroup", key, BodygroupSubPanel.BodygroupNumber)
+
+                    ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), BodygroupSubPanel.BodygroupNumber )
+                end
+
+            end
+
+        end
+
+
+
+        // Spawn Button Panel
+
+        local SpawnButton = vgui.Create("DButton", SpawnButtonPanel)
+        SpawnButton:SetText("Spawn")
+        SpawnButton:SetFont("QuanticoNormal")
+        SpawnButton:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        SpawnButton:Dock(BOTTOM)
+        SpawnButton:SetTall( 50 )
+        SpawnButton:DockMargin(5,5,5,5)
+
+        SpawnButton.Paint = function(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["apply_btn"] )
+            if self:IsHovered() then
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+            end
+        end
+
+
+
+
+    end
 
 
 
