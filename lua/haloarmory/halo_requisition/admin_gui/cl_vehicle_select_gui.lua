@@ -20,7 +20,7 @@ local NewTemplateVehicle = {
         ["skin"] = "Default",
     },
     ["colors"] = {
-        ["Green"] = Color( 0, 255, 0 ),
+        ["UNSC Green"] = Color( 76, 85, 63 ),
     },
     ["skins"] = {
         ["Default"] = 0,
