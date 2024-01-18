@@ -228,7 +228,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 draw.SimpleText( VehiclePrintName, "QuanticoNormal", 60, 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
                 // Draw vehicle cost
-                draw.SimpleText( "Cost: " .. v["cost"] .. " supplies ", "HaloArmory_24", w - 5, h - 10, Color(189,189,189), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+                draw.SimpleText( "Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(v["cost"]) .. " supplies ", "HaloArmory_24", w - 5, h - 10, Color(189,189,189), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
             end
 
             // Create a DModelPanel to display the vehicle
@@ -293,6 +293,30 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         surface.SetFont( self:GetFont() )
         local fontWidth, fontHeight = surface.GetTextSize( label )
         draw.SimpleText( tostring( PadEnt:GetNetworkID() ), self:GetFont(), fontWidth + 5, 0, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+
+
+        // Draw the network supplies and max supplies as a progress bar
+
+        // Draw the background of the progress bar
+        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, w - 10, 30, Color(0,0,0,125) )
+
+        // Get the network supplies and max supplies
+        local controller_network = util.JSONToTable( PadEnt:GetNetworkTable() )
+
+        if istable(controller_network) then
+
+            local CurrentResource, MaxResource = controller_network.Supplies, controller_network.MaxSupplies
+
+            local Progress = CurrentResource / MaxResource
+
+            local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
+
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, LerpColor )
+
+            draw.SimpleText( "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource), self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+        
+        end
+
     end
 
 
