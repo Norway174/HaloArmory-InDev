@@ -27,7 +27,42 @@ function ENT:Draw3D2D( ent )
             if ui3d2d.isPressed() then
                 // Open the GUI to request a vehicle
                 --HALOARMORY.Requisition.Open( self:GetPadID() )
-                RunConsoleCommand( "haloarmory_padselector" )
+                if HALOARMORY.Requisition.GUI.Pad_Menu then
+                    return
+                end
+                
+                if self:GetConsoleID() ~= "" then
+                    // Loop through all the pads and find the one that matches the console ID
+                    local pads = {}
+
+                    for _, the_ent in ents.Iterator() do
+                        if ( the_ent.VehiclePad ) then
+                            table.insert(pads, the_ent)
+                        end
+                    end
+
+                    // Compatibility mode if no pads are found
+                    if #pads == 0 then
+                        for _, the_ent in pairs(ents.GetAll()) do
+                            if ( the_ent.VehiclePad ) then
+                                table.insert(pads, the_ent)
+                            end
+                        end    
+                    end
+
+                    //print("Found "..#pads.." pads")
+
+                    for _, pad in pairs(pads) do
+                        if pad:GetPadID() == self:GetConsoleID() then
+                            HALOARMORY.Requisition.OpenVehiclePad( pad )
+                            return
+                        end
+                    end
+
+                    HALOARMORY.Requisition.OpenPadSelector()
+                else
+                    HALOARMORY.Requisition.OpenPadSelector()
+                end
             end
         else
             btnColor = Color( 92, 92, 92)
