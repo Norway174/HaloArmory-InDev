@@ -88,6 +88,15 @@ if SERVER then
                 end
             end
 
+            // Compatibility mode if no pads are found
+            if #pads == 0 then
+                for _, ent in pairs(ents.GetAll()) do
+                    if ( ent.VehiclePad ) then
+                        table.insert(pads, ent)
+                    end
+                end    
+            end
+
             net.Start(NET_NAME)
                 net.WriteUInt(ACTION_REQUEST_VEHICLE_PADS, 8)
                 net.WriteUInt(#pads, 13)
