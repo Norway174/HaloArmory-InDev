@@ -89,10 +89,10 @@ function HALOARMORY.Requisition.OpenPadSelector( callback )
 
         HALOARMORY.Requisition.VehiclePads = pads
 
-        print( "Got vehicle pads", pads, #pads )
-        if istable( pads ) then
-            PrintTable( pads )
-        end
+        --print( "Got vehicle pads", pads, #pads )
+        --if istable( pads ) then
+        --    PrintTable( pads )
+        --end
 
         for k, v in pairs( pads ) do
             local VehiclePad = vgui.Create( "DPanel", VehiclePadList )
