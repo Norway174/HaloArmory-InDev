@@ -35,19 +35,19 @@ function ENT:Draw3D2D( ent )
                     // Loop through all the pads and find the one that matches the console ID
                     local pads = {}
 
-                    for _, the_ent in ents.Iterator() do
-                        if ( the_ent.VehiclePad ) then
-                            table.insert(pads, the_ent)
+                    if ents.Iterator then
+                        for _, the_ent in ents.Iterator() do
+                            if ( ent.VehiclePad ) then
+                                table.insert(pads, the_ent)
+                            end
                         end
-                    end
-
-                    // Compatibility mode if no pads are found
-                    if #pads == 0 then
+        
+                    else // Compatibility mode if no pads are found
                         for _, the_ent in pairs(ents.GetAll()) do
                             if ( the_ent.VehiclePad ) then
                                 table.insert(pads, the_ent)
                             end
-                        end    
+                        end
                     end
 
                     //print("Found "..#pads.." pads")

@@ -82,19 +82,19 @@ if SERVER then
         if action == ACTION_REQUEST_VEHICLE_PADS then
             local pads = {}
 
-            for _, ent in ents.Iterator() do
-                if ( ent.VehiclePad ) then
-                    table.insert(pads, ent)
+            if ents.Iterator then
+                for _, ent in ents.Iterator() do
+                    if ( ent.VehiclePad ) then
+                        table.insert(pads, ent)
+                    end
                 end
-            end
 
-            // Compatibility mode if no pads are found
-            if #pads == 0 then
+            else // Compatibility mode if no pads are found
                 for _, ent in pairs(ents.GetAll()) do
                     if ( ent.VehiclePad ) then
                         table.insert(pads, ent)
                     end
-                end    
+                end
             end
 
             net.Start(NET_NAME)
