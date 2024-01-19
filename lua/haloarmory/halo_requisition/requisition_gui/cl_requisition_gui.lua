@@ -185,6 +185,8 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         --    PrintTable(vehicles)
         --end
 
+        HALOARMORY.Requisition.Vehicles = vehicles
+
         // Remove the loading label
         LoadingLabel:Remove()
 
@@ -290,6 +292,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     NetworkName:SetContentAlignment(5)
 
     NetworkName.Cost = 0
+    NetworkName.Reclaim = 0
 
     NetworkName.Paint = function(self, w, h)
         local label = "Network: "
@@ -314,6 +317,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             // Calculate the progress and the cost progress
             local Progress = CurrentResource / MaxResource
             local ProgressCost = NetworkName.Cost / MaxResource
+            local ProgressCostReclaim = NetworkName.Reclaim / MaxResource
 
             local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
 
@@ -321,11 +325,19 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
             // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
             draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(133, 18, 18, 210) )
+            
+            // Reclaim Amount Progress
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * Progress, fontHeight + 5, (w - 10) * ProgressCostReclaim, 30, Color(18, 72, 133, 210) )
+
 
             local supplies_text = "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource)
 
             if NetworkName.Cost ~= 0 then
-                supplies_text = supplies_text .. " ( " .. HALOARMORY.INTERFACE.PrettyFormatNumber( -NetworkName.Cost ) .. " )"
+                supplies_text = supplies_text .. " (Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber( -NetworkName.Cost ) .. " )"
+            end
+
+            if NetworkName.Reclaim ~= 0 then
+                supplies_text = supplies_text .. " (Reclaim: +" .. HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) .. " )"
             end
 
             draw.SimpleText( supplies_text, self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
@@ -395,10 +407,10 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         NetworkName.Cost = vehicle["cost"] or 0
 
-        print("Selected vehicle", vehicle)
-        if istable(vehicle) then
-            PrintTable(vehicle)
-        end
+        -- print("Selected vehicle", vehicle)
+        -- if istable(vehicle) then
+        --     PrintTable(vehicle)
+        -- end
 
 
         // Create a Header to display the vehicle name
@@ -671,18 +683,44 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             end
         end
 
+        SpawnButton.DoClick = function()
+            local selected_Options = {}
+
+            selected_Options["color"] = ColorOptionDropDown:GetValue()
+            selected_Options["skin"] = SkinOptionDropDown:GetValue()
+
+            local bodygroups = {}
+
+            for key, value in pairs( ListOfBodygroups ) do
+                bodygroups[key] = ModelPanel.Entity:GetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ) )
+            end
+
+            selected_Options["bodygroups"] = bodygroups
+
+            print("Spawning vehicle", vehicle, selected_Options)
+            if istable(vehicle) then
+                PrintTable(vehicle)
+            end
+            print( "------------" )
+            if istable(selected_Options) then
+                PrintTable(selected_Options)
+            end
+
+            --HALOARMORY.Requisition.SpawnVehicle( vehicle, PadEnt )
+        end
+
     end
 
 
 
     // Create a Queue Header on the right panel
-    local QueueHeader = vgui.Create("DLabel", RightPanel)
-    QueueHeader:SetText("Queue")
-    QueueHeader:SetFont("QuanticoHeader")
-    QueueHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
-    QueueHeader:Dock(TOP)
-    QueueHeader:DockMargin(5,15,5,0)
-    QueueHeader:SetContentAlignment(5)
+    local OnPadHeader = vgui.Create("DLabel", RightPanel)
+    OnPadHeader:SetText("On Pad")
+    OnPadHeader:SetFont("QuanticoHeader")
+    OnPadHeader:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    OnPadHeader:Dock(TOP)
+    OnPadHeader:DockMargin(5,15,5,0)
+    OnPadHeader:SetContentAlignment(5)
 
 
     // Create a top panel to dislay if anything is currently on the pad.
@@ -690,78 +728,143 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     local QueueOnPadPanel = vgui.Create("DPanel", RightPanel)
     QueueOnPadPanel:Dock(TOP)
     QueueOnPadPanel:SetTall( 75 )
+    QueueOnPadPanel:DockMargin(5,10,5,0)
 
     QueueOnPadPanel.OnPadEnt = nil
 
     QueueOnPadPanel.Paint = function(self, w, h)
-        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(136,86,12,125) )
+        if IsValid( QueueOnPadPanel.OnPadEnt ) then
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(136,12,12,28) )
+        else
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(37,136,12,28) )
+        end
 
         --draw.SimpleText( tostring( self.OnPadEnt ), "QuanticoHeader", w/2, 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
     end
 
-    local lastTickEnt = nil
-    QueueOnPadPanel.Think = function(self)
-        
-        QueueOnPadPanel.OnPadEnt = PadEnt:GetOnPad()
 
-        if IsValid(QueueOnPadPanel.OnPadEnt) and (QueueOnPadPanel.OnPadEnt ~= lastTickEnt) then
-            QueueOnPadPanel:Clear()
-            print("OnPadEnt changed", QueueOnPadPanel.OnPadEnt)
+    // Display the vehicle model
+    local VehicleModelPanel = vgui.Create("DModelPanel", QueueOnPadPanel)
+    VehicleModelPanel:Dock(LEFT)
+    VehicleModelPanel:SetWide( 75 )
 
-            // Display the vehicle model
-            local VehicleModelPanel = vgui.Create("DModelPanel", QueueOnPadPanel)
-            VehicleModelPanel:Dock(LEFT)
-            VehicleModelPanel:SetWide( 100 )
+    local Ent_OnPad_Model = "models/m_anm.mdl"
 
-            VehicleModelPanel:SetModel( QueueOnPadPanel.OnPadEnt:GetModel() or "Error" )
+    VehicleModelPanel:SetModel( Ent_OnPad_Model )
 
-            VehicleModelPanel:SetCamPos( Vector( 134, 100, 100) )
-            VehicleModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
-            VehicleModelPanel:SetFOV( 90 )
+    VehicleModelPanel:SetCamPos( Vector( 134, 100, 100) )
+    VehicleModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
+    VehicleModelPanel:SetFOV( 90 )
 
-            function VehicleModelPanel:LayoutEntity( Entity )
-            end
+    function VehicleModelPanel:LayoutEntity( Entity )
+    end
 
-            // Create a label with the vehicle name
-            local VehicleName = vgui.Create("DLabel", QueueOnPadPanel)
-            VehicleName:SetText( tostring( QueueOnPadPanel.OnPadEnt.PrintName ) )
-            VehicleName:SetFont("QuanticoNormal")
-            VehicleName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
-            VehicleName:Dock(FILL)
-            VehicleName:DockMargin(5,5,5,0)
-            VehicleName:SetContentAlignment(7)
+    // Create a label with the vehicle name
+    local VehicleName = vgui.Create("DLabel", QueueOnPadPanel)
+    VehicleName:SetFont("QuanticoNormal")
+    VehicleName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    VehicleName:Dock(FILL)
+    VehicleName:DockMargin(5,5,5,0)
+    VehicleName:SetContentAlignment(7)
+    VehicleName:SetText( "" )
 
+    VehicleName.Paint = function(self, w, h)
+        local Ent_OnPad_Name = "Pad is empty"
+        if IsValid( QueueOnPadPanel.OnPadEnt ) then
+            Ent_OnPad_Name = tostring( QueueOnPadPanel.OnPadEnt.PrintName or QueueOnPadPanel.OnPadEnt.Name or QueueOnPadPanel.OnPadEnt )
 
-            // Add a button to reclaim the vehicle
-            local ReclaimButton = vgui.Create("DButton", QueueOnPadPanel)
-            ReclaimButton:SetText("")
-            ReclaimButton:SetFont("QuanticoNormal")
-            ReclaimButton:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
-            ReclaimButton:Dock(BOTTOM)
-            ReclaimButton:DockMargin(5,5,5,5)
-
-            ReclaimButton.Paint = function(self, w, h)
-                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["apply_btn"] )
-                if self:IsHovered() then
-                    draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+            if QueueOnPadPanel.OnPadEnt:GetClass() == "gmod_sent_vehicle_fphysics_base" then
+                local vehTable = list.Get( "simfphys_vehicles" )[ QueueOnPadPanel.OnPadEnt:GetVehicleClass() ]
+                if istable(vehTable) and vehTable["Name"] then
+                    Ent_OnPad_Name = vehTable["Name"]
                 end
-
-                draw.SimpleText( "Reclaim", "QuanticoNormal", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
-
-            ReclaimButton.DoClick = function()
-                print("Reclaiming vehicle", QueueOnPadPanel.OnPadEnt)
-                --HALOARMORY.Requisition.ReclaimVehicle( QueueOnPadPanel.OnPadEnt )
-            end
-
-        elseif !IsValid(QueueOnPadPanel.OnPadEnt) then
-            QueueOnPadPanel:Clear()
         end
 
-        lastTickEnt = QueueOnPadPanel.OnPadEnt
+        draw.SimpleText( Ent_OnPad_Name, self:GetFont(), 5, 0, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+    end
+
+
+    // Add a button to reclaim the vehicle
+    local ReclaimButton = vgui.Create("DButton", QueueOnPadPanel)
+    ReclaimButton:SetText("")
+    ReclaimButton:SetFont("QuanticoNormal")
+    ReclaimButton:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+    ReclaimButton:Dock(BOTTOM)
+    ReclaimButton:SetTall( 35 )
+    ReclaimButton:DockMargin(5,5,5,5)
+
+    ReclaimButton.Paint = function(self, w, h)
+
+        --if not IsValid( QueueOnPadPanel.OnPadEnt ) then return end
+
+        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["apply_btn"] )
+
+
+        if self:IsHovered() then
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
+        end
+        
+        local textBtn = "Reclaim"
+        if NetworkName.Reclaim then
+            textBtn = textBtn .. " ( +"..tostring( NetworkName.Reclaim ).." )"
+        end
+
+        draw.SimpleText( textBtn, "QuanticoNormal", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+
+    ReclaimButton.DoClick = function()
+        print("Reclaiming vehicle", QueueOnPadPanel.OnPadEnt)
+        --HALOARMORY.Requisition.ReclaimVehicle( QueueOnPadPanel.OnPadEnt )
 
     end
 
+    local lastModel = ""
+    QueueOnPadPanel.Think = function(self)
+        self.OnPadEnt = PadEnt:GetOnPad()
+
+
+        NetworkName.Reclaim = 0
+
+        if IsValid( self.OnPadEnt ) then
+            // RECLAIM BUTTON
+            ReclaimButton:SetVisible( true )
+            NetworkName.Reclaim = 0
+
+            if self.OnPadEnt.GetReclaimAmount then
+                NetworkName.Reclaim = self.OnPadEnt:GetReclaimAmount()
+            end
+
+            // MODEL
+            if self.OnPadEnt.GetModel then
+                Ent_OnPad_Model = self.OnPadEnt:GetModel()
+            else
+                Ent_OnPad_Model = "models/m_anm.mdl"
+            end
+
+            if lastModel ~= Ent_OnPad_Model then
+                lastModel = Ent_OnPad_Model
+
+                VehicleModelPanel:SetModel( Ent_OnPad_Model )
+            end
+
+
+        else
+            // RECLAIM BUTTON
+            ReclaimButton:SetVisible( false )
+
+            // MODEL
+            Ent_OnPad_Model = "models/m_anm.mdl"
+
+            if lastModel ~= Ent_OnPad_Model then
+                lastModel = Ent_OnPad_Model
+
+                VehicleModelPanel:SetModel( Ent_OnPad_Model )
+            end
+        end
+
+
+    end
 
 
     // Keep at the bottom
