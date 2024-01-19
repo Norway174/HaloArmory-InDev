@@ -16,7 +16,7 @@ local NewTemplateVehicle = {
         ["air"] = true,
     },
     ["defaults"] = {
-        ["color"] = "Green",
+        ["color"] = "UNSC Green",
         ["skin"] = "Default",
     },
     ["colors"] = {
