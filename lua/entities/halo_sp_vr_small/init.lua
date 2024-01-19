@@ -18,33 +18,56 @@ function ENT:OnRemove()
 end
 
 
-function ENT:Think()
-
-    self:NextThink( CurTime() + 1 )
+function ENT:UpdateOnPad()
 
     local pos = self:GetPos() + self.VehicleSpawnPos
     // Check if there is a vehicle on the pad.
     local nearby_ent = {}
 
     // Remove self from the table.
-    for k, v in pairs( ents.FindInSphere( pos, 20 ) ) do
+    for k, v in pairs( ents.FindInSphere( pos, 100 ) ) do
 
         //print( "Found:", v:GetClass() )
         if v == self then continue end
         if v.HALOARMORY_Ships_Presets then continue end
 
-        --print( "Found:", v:GetClass() )
-
-        local Vehicle_Ent = scripted_ents.Get( v:GetClass() )
-
-        if not Vehicle_Ent then
-            // Might be Simfphys
-            Vehicle_Ent = list.Get("simfphys_vehicles")[v:GetClass()]
+        if v:IsPlayer() then
+            continue
         end
 
-        if istable( Vehicle_Ent ) then
+        if v:IsNPC() then
+            continue
+        end
+
+        // Check if v has a parent.
+        if IsValid( v:GetParent() ) then
+            continue
+        end
+
+        if v:IsWeapon() then
+            continue
+        end
+
+        if v.LVS then
             table.insert( nearby_ent, v )
+            continue
         end
+
+        if v.LVSsimfphys then
+            table.insert( nearby_ent, v )
+            continue
+        end
+
+        if v.IsSimfphyscar then
+            table.insert( nearby_ent, v )
+            continue
+        end
+
+        if v:IsVehicle() then
+            table.insert( nearby_ent, v )
+            continue
+        end
+
     end
 
     // Sort nearby entities by distance. And return the closest one.
@@ -61,12 +84,21 @@ function ENT:Think()
     end
 
     // Debug overlay
-    debugoverlay.EntityTextAtPosition( pos, 0, tostring( #nearby_ent ) )
+    debugoverlay.EntityTextAtPosition( pos, 0, tostring( table.Count( nearby_ent ) ) )
     local ind = 1
     for key, value in pairs(nearby_ent) do
         debugoverlay.EntityTextAtPosition( pos, ind, tostring( value ) )
         ind = ind + 1
     end
+
+end
+
+
+function ENT:Think()
+
+    self:NextThink( CurTime() + 1 )
+
+    self:UpdateOnPad()
 
 end
 
