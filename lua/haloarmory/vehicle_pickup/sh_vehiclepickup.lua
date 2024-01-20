@@ -45,7 +45,7 @@ HALOARMORY.Vehicles.allowedVehicles = {
         ["pos"] = Vector(0, 0, 150),
         ["rad"] = 250,
     },
-    ["imp_halo_hum_falcon"] = {
+    ["imp_halo_hum_falcon"] = { 
         ["pos"] = Vector(-10, 0, 55),
         ["rad"] = 60,
     },
@@ -91,6 +91,15 @@ HALOARMORY.Vehicles.allowedVehicles = {
     ["imp_halo_urf_pelican_d77tc"] = {
         ["pos"] = Vector(-500, 0, 60),
         ["rad"] = 200,
+    },
+    // [LFS] - Halo [Flock]
+    ["imp_halo_flock_falcon"] = { 
+        ["pos"] = Vector(-10, 0, 55),
+        ["rad"] = 60,
+    },
+    ["imp_halo_flock_falcon_urf"] = { 
+        ["pos"] = Vector(-10, 0, 55),
+        ["rad"] = 60,
     },
     // LFS Halo
     // UNSC
@@ -405,6 +414,14 @@ HALOARMORY.Vehicles.allowedObjectsToLoad = {
     ["imp_halo_sch_revenant_storm"] = true,
     //Summe
     ["comlink_array"] = true,
+    //Halo - Mantis
+    ["halo_mantis_mkix_mining"] = true,
+    ["halo_mantis_mkix_hannibal"] = true,
+    --["halo_mantis_mk2"] = true, // Large Mantis. Way too big.
+    ["halo_mantis_mkix"] = true,
+    ["halo_mantis_mkix_insurgent"] = true,
+    ["halo_mantis_mkix_oni"] = true,
+    ["halo_mantis_mkix_camo_tundra"] = true,
 }
 
 if SERVER then
