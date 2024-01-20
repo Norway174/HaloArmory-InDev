@@ -192,7 +192,24 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         // Create a list of vehicles that can be spawned
         for k, v in pairs( vehicles ) do
+
             --print("Adding vehicle to list", k, v["name"])
+            -- if istable(v) then
+            --     PrintTable(v)
+            -- end
+
+            // Check the correct size of vehicle for the pad.
+            local can_spawn = false
+            for _, pad_size in pairs( PadEnt.VehicleSize ) do
+                if v["sizes"][pad_size] then
+                    --print("Vehicle is correct size")
+                    can_spawn = true
+                else
+                    --print("Vehicle is not correct size")
+                end
+                
+            end
+            if not can_spawn then continue end
 
             local Vehicle_Ent = scripted_ents.Get( v["entity"] )
 
@@ -397,7 +414,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         if not Vehicle_Ent then return end
 
-        local VehiclePrintName = Vehicle_Ent.PrintName or Vehicle_Ent.Name
+        local VehiclePrintName = vehicle["name"] or Vehicle_Ent.PrintName or Vehicle_Ent.Name
         local VehicleModel = Vehicle_Ent.Model or Vehicle_Ent.MDL
 
         --print( VehiclePrintName, VehicleModel )
@@ -647,17 +664,17 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                     local current_bodygroup_id = v_ent:FindBodygroupByName( key )
                     local current_bodygroup = ModelPanel.Entity:GetBodygroup( current_bodygroup_id )
 
-                    if BodygroupSubPanel.BodygroupNumber == current_bodygroup then
+                    if value[self.BodygroupNumber + 1] == current_bodygroup then
                         draw.RoundedBox( 0, 1, 1, w-2, h-2, Color( 0, 255, 0, 70) )
                     end
 
-                    draw.SimpleText( BodygroupSubPanel.BodygroupNumber, "DermaDefault", size / 2, size / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                    draw.SimpleText( value[self.BodygroupNumber + 1], "DermaDefault", size / 2, size / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
                 end
 
                 BodygroupSubPanel.DoClick = function(self)
                     //print("Clicked bodygroup", key, BodygroupSubPanel.BodygroupNumber)
 
-                    ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), BodygroupSubPanel.BodygroupNumber )
+                    ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), value[self.BodygroupNumber + 1] )
                 end
 
             end

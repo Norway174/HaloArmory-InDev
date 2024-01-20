@@ -31,9 +31,7 @@ function ENT:CustomDataTables()
     self:NetworkVar( "String", 3, "PadID", { KeyName = "PadID",	Edit = { type = "String", order = 1 } } )
     self:NetworkVar( "Entity", 1, "OnPad" )
     self:NetworkVar( "Entity", 2, "Building" )
-    for i = 1, 10 do
-        self:NetworkVar( "Entity", 2 + i, "Queue" .. i )
-    end
+
 
     if SERVER then
         local random_uuid = util.CRC( tostring( self:EntIndex() ) .. "_" .. tostring( CurTime() ) .. "_" .. tostring( math.random( 0, 100000 ) ) )
