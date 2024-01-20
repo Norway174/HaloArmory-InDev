@@ -144,3 +144,76 @@ if (SERVER) then
 
 
 end
+
+
+
+// Add a fallback method to add the prop to the ship with a right click context menu
+properties.Add( "ship_attacher", {
+    MenuLabel = "HALOARMORY - Toggle Attach", -- Name to display on the context menu
+    Order = 10001, -- The order to display this property relative to other properties
+    MenuIcon = "icon16/attach.png", -- The icon to display next to the property
+    PrependSpacer = true,
+
+    Filter = function( self, ent, ply ) -- A function that determines whether an entity is valid for this property
+        if ( !IsValid( ent ) ) then return false end
+        if ( ent:IsPlayer() ) then return false end
+        
+        if ( not IsValid( ply:GetTool().SelectedShip ) ) then return false end
+
+        return true
+        
+    end,
+    Action = function( self, ent ) -- The action to perform upon using the property ( Clientside )
+        local ship = LocalPlayer():GetTool().SelectedShip
+        self:MsgStart()
+			net.WriteEntity( ship )
+			net.WriteEntity( ent )
+		self:MsgEnd()
+    end,
+    Receive = function( self, length, ply ) -- The action to perform upon using the property ( Serverside )
+        local ship = net.ReadEntity()
+        local prop = net.ReadEntity()
+
+        if not IsValid(ship) or not IsValid(prop) then return end
+
+        if not ship.HALOARMORY_Attached then return end
+
+        local success = false
+        local text = {"An error has accoured trying to attach the prop to the ship."}
+
+        if not table.HasValue(ship.HALOARMORY_Attached, prop) then // If attaching
+
+            if table.HasValue(ship.HALOARMORY_Attached, prop) then
+                // Already attached
+                text = {"Prop is already attached to ", Color(159,241,255), ship:GetClass(), Color(255,255,255), "."}
+            else
+                // Attach
+                success = HALOARMORY.Ships.AddProp(ship, prop)
+                text = {"Prop attached to ", Color(159,241,255), ship:GetClass(), Color(255,255,255), "."}
+            end
+
+
+        else // If detaching
+
+            if table.HasValue(ship.HALOARMORY_Attached, prop) then
+                // Detach
+                success = HALOARMORY.Ships.RemoveProp(ship, prop)
+                text = {"Prop detached from ", Color(159,241,255), ship:GetClass(), Color(255,255,255), "."}
+            else
+                // Already detached
+                text = {"The prop is not attached to ", Color(159,241,255), ship:GetClass(), Color(255,255,255), "."}
+            end
+        end
+
+        print("Success:", success)
+        if success then
+            net.Start("HALOARMORY.SHIP.STOOL.CHATPRINT")
+                net.WriteTable(text)
+            net.Send(ply)
+        else
+
+        end
+
+
+    end
+} )
