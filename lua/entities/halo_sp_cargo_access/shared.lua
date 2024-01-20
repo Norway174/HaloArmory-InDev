@@ -40,13 +40,13 @@ ENT.Theme = {
 
 function ENT:CustomDataTables()
 
-    self:NetworkVar( "Vector", 0, "HeaderColor", { KeyName = "HeaderColor",	Edit = { type = "VectorColor", order = 3 } } )
-    self:NetworkVar( "Int", 2, "RateM", { KeyName = "RateM",	Edit = { title = "Rate / min", type = "Int", order = 6, min = -9999, max = 9999 } } )
+    -- self:NetworkVar( "Vector", 0, "HeaderColor", { KeyName = "HeaderColor",	Edit = { type = "VectorColor", order = 3 } } )
+    -- self:NetworkVar( "Int", 2, "RateM", { KeyName = "RateM",	Edit = { title = "Rate / min", type = "Int", order = 6, min = -9999, max = 9999 } } )
 
-    if SERVER then
-        self:SetHeaderColor( Color(18, 39, 133, 102):ToVector() )
-        self:SetRateM( self.RateM )
-    end
+    -- if SERVER then
+    --     self:SetHeaderColor( Color(18, 39, 133, 102):ToVector() )
+    --     self:SetRateM( self.RateM )
+    -- end
 
 end
 
