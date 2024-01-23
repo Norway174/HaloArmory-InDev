@@ -219,6 +219,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
             if not string.EndsWith( VehicleModel, ".mdl" ) then VehicleModel = "error" end
 
+            if v["name"] then VehiclePrintName = v["name"] end
 
 
             local VehiclePanel = vgui.Create("DPanel", VehicleList)
@@ -395,6 +396,8 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         if not Vehicle_Ent then return end
 
         if VehicleClass == "" then return end
+
+        if vehicle["name"] then VehiclePrintName = vehicle["name"] end
 
 
         // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
