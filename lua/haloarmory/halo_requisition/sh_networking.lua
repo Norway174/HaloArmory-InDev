@@ -9,6 +9,8 @@ local NET_NAME = "HALOARMORY.VEHICLES.NETWORK"
 
 local ACTION_REQUEST_VEHICLE_PADS = 1
 local ACTION_REQUEST_VEHICLES = 2
+local ACTION_SPAWN_VEHICLE = 3
+local ACTION_REMOVE_VEHICLE = 4
 
 if SERVER then
     util.AddNetworkString(NET_NAME)
@@ -54,6 +56,26 @@ if CLIENT then
                 Callbacks[ACTION_REQUEST_VEHICLES] = nil
             end
 
+        elseif action == ACTION_SPAWN_VEHICLE then
+
+            local success = net.ReadBool()
+
+            if Callbacks[ACTION_SPAWN_VEHICLE] then
+                Callbacks[ACTION_SPAWN_VEHICLE](success)
+
+                Callbacks[ACTION_SPAWN_VEHICLE] = nil
+            end
+
+        elseif action == ACTION_REMOVE_VEHICLE then
+                
+                local success = net.ReadBool()
+    
+                if Callbacks[ACTION_REMOVE_VEHICLE] then
+                    Callbacks[ACTION_REMOVE_VEHICLE](success)
+    
+                    Callbacks[ACTION_REMOVE_VEHICLE] = nil
+                end
+
         end
     end)
 
@@ -71,6 +93,27 @@ if CLIENT then
         net.Start(NET_NAME)
             net.WriteUInt(ACTION_REQUEST_VEHICLES, 8)
             net.WriteEntity(PadEnt)
+        net.SendToServer()
+    end
+
+    function HALOARMORY.VEHICLES.NETWORK.SpawnVehicle( PadEnt, vehicle_key, vehicle_options, callback )
+        Callbacks[ACTION_SPAWN_VEHICLE] = callback
+
+        net.Start(NET_NAME)
+            net.WriteUInt(ACTION_SPAWN_VEHICLE, 8)
+            net.WriteEntity(PadEnt)
+            net.WriteString(vehicle_key)
+            net.WriteTable(vehicle_options)
+        net.SendToServer()
+    end
+
+    function HALOARMORY.VEHICLES.NETWORK.RemoveVehicle( PadEnt, vehicle, callback )
+        Callbacks[ACTION_REMOVE_VEHICLE] = callback
+
+        net.Start(NET_NAME)
+            net.WriteUInt(ACTION_REMOVE_VEHICLE, 8)
+            net.WriteEntity(PadEnt)
+            net.WriteEntity(vehicle)
         net.SendToServer()
     end
 end
@@ -138,6 +181,38 @@ if SERVER then
                 
             net.Send(ply)
 
+        elseif action == ACTION_SPAWN_VEHICLE then
+
+            local VPadENT = net.ReadEntity()
+            local vehicle_key = net.ReadString()
+            local vehicle_options = net.ReadTable()
+
+            if not IsValid(VPadENT) or not VPadENT.VehiclePad then return end
+
+            --print( "Spawning vehicle", vehicle_key, vehicle_options )
+
+            local success = VPadENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
+
+            net.Start(NET_NAME)
+                net.WriteUInt(ACTION_SPAWN_VEHICLE, 8)
+                net.WriteBool(success)
+            net.Send(ply)
+
+        elseif action == ACTION_REMOVE_VEHICLE then
+                
+            local VPadENT = net.ReadEntity()
+            local vehicle = net.ReadEntity()
+
+            if not IsValid(VPadENT) or not VPadENT.VehiclePad then return end
+            if not IsValid(vehicle) then return end
+    
+            local success = VPadENT:ReclaimVehicle( ply, vehicle )
+
+            net.Start(NET_NAME)
+                net.WriteUInt(ACTION_REMOVE_VEHICLE, 8)
+                net.WriteBool(success)
+            net.Send(ply)
+                
         end
     end)
 end

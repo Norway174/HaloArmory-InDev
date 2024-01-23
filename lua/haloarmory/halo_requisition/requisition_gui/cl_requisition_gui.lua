@@ -211,21 +211,10 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             end
             if not can_spawn then continue end
 
-            local Vehicle_Ent = scripted_ents.Get( v["entity"] )
 
-            if Vehicle_Ent == nil then
-                // Might be Simfphys
-                Vehicle_Ent = list.Get("simfphys_vehicles")[v["entity"]]
-            end
-        
-            --print( Vehicle_Ent )
-        
-            if not Vehicle_Ent then return end
-        
-            local VehiclePrintName = Vehicle_Ent.PrintName or Vehicle_Ent.Name
-            local VehicleModel = Vehicle_Ent.Model or Vehicle_Ent.MDL
-        
-            --print( VehiclePrintName, VehicleModel )
+            local Vehicle_Ent, VehicleModel, VehiclePrintName = HALOARMORY.Requisition.GetModelAndNameFromVehicle( v["entity"] )
+
+            if not Vehicle_Ent then continue end
         
             // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
             if not string.EndsWith( VehicleModel, ".mdl" ) then VehicleModel = "error" end
@@ -277,10 +266,10 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             end
 
             SelectVehicle.DoClick = function()
-                print("Selected vehicle", v["entity"])
+                --print("Selected vehicle", k, v["entity"])
                 --HALOARMORY.Requisition.SpawnVehicle( v["entity"], PadEnt )
 
-                CenterPanel.SelectVehicle( v )
+                CenterPanel.SelectVehicle( k, v )
             end
 
 
@@ -338,10 +327,10 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
             local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
 
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * (Progress - ProgressCost), 30, LerpColor )
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, Color(37, 133, 18, 210) )
 
             // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(133, 18, 18, 210) )
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(133, 18, 18, 210) )
             
             // Reclaim Amount Progress
             draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * Progress, fontHeight + 5, (w - 10) * ProgressCostReclaim, 30, Color(18, 72, 133, 210) )
@@ -393,7 +382,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     SelectVehiclePlaceholder:SetTall( 200 )
 
 
-    function CenterPanel.SelectVehicle( vehicle )
+    function CenterPanel.SelectVehicle( vehicle_key, vehicle )
         SelectedVehicleContainer:Clear()
 
 
@@ -401,23 +390,12 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         --print( VehicleClass )
 
-        if VehicleClass == "" then return end
-
-        local Vehicle_Ent = scripted_ents.Get( VehicleClass )
-
-        if Vehicle_Ent == nil then
-            // Might be Simfphys
-            Vehicle_Ent = list.Get("simfphys_vehicles")[VehicleClass]
-        end
-
-        --print( Vehicle_Ent )
+        local Vehicle_Ent, VehicleModel, VehiclePrintName = HALOARMORY.Requisition.GetModelAndNameFromVehicle( VehicleClass )
 
         if not Vehicle_Ent then return end
 
-        local VehiclePrintName = vehicle["name"] or Vehicle_Ent.PrintName or Vehicle_Ent.Name
-        local VehicleModel = Vehicle_Ent.Model or Vehicle_Ent.MDL
+        if VehicleClass == "" then return end
 
-        --print( VehiclePrintName, VehicleModel )
 
         // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
         if not string.EndsWith( VehicleModel, ".mdl" ) then return end
@@ -484,8 +462,6 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             self.aLookAngle = self.aLookAngle + Angle( y * 4, x * 4, 0 )
             self.vCamPos = self.OrbitPoint - self.aLookAngle:Forward() * self.OrbitDistance
         end
-
-        local ModelPanel_ent = ModelPanel.Entity
 
         // Create a bottom panel for 3 columns of options.
         // Color & Skin | Bodygroups | Spawn
@@ -675,6 +651,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                     //print("Clicked bodygroup", key, BodygroupSubPanel.BodygroupNumber)
 
                     ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), value[self.BodygroupNumber + 1] )
+                    ModelPanel.Entity.SelectedBodygroup = value
                 end
 
             end
@@ -694,13 +671,19 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         SpawnButton:DockMargin(5,5,5,5)
 
         SpawnButton.Paint = function(self, w, h)
+            local canAfford = PadEnt:CanAfford( vehicle )
+            if not self:IsEnabled() or not canAfford then
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(20,20,20,148) )
+                return
+            end
+
             draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, HALOARMORY.Requisition.Theme["apply_btn"] )
             if self:IsHovered() then
                 draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,45) )
             end
         end
 
-        SpawnButton.DoClick = function()
+        SpawnButton.DoClick = function( self )
             local selected_Options = {}
 
             selected_Options["color"] = ColorOptionDropDown:GetValue()
@@ -709,19 +692,33 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             local bodygroups = {}
 
             for key, value in pairs( ListOfBodygroups ) do
-                bodygroups[key] = ModelPanel.Entity:GetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ) )
+                bodygroups[key] = ModelPanel.Entity.SelectedBodygroup or 1
             end
 
             selected_Options["bodygroups"] = bodygroups
 
-            print("Spawning vehicle", vehicle, selected_Options)
-            if istable(vehicle) then
-                PrintTable(vehicle)
-            end
-            print( "------------" )
-            if istable(selected_Options) then
-                PrintTable(selected_Options)
-            end
+            --print( "------------" )
+            --print("Spawning vehicle", vehicle_key, vehicle, selected_Options)
+            --print( "------------" )
+            --if istable(vehicle) then
+            --    PrintTable(vehicle)
+            --end
+            --print( "------------" )
+            --if istable(selected_Options) then
+            --    PrintTable(selected_Options)
+            --end
+
+            self:SetEnabled( false )
+
+            HALOARMORY.VEHICLES.NETWORK.SpawnVehicle( PadEnt, vehicle_key, selected_Options, function( success ) 
+            
+                --print("Spawned vehicle", success)
+
+                if success then
+                    self:SetEnabled( true )
+                end
+            
+            end )
 
             --HALOARMORY.Requisition.SpawnVehicle( vehicle, PadEnt )
         end
@@ -824,15 +821,24 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         
         local textBtn = "Reclaim"
         if NetworkName.Reclaim then
-            textBtn = textBtn .. " ( +"..tostring( NetworkName.Reclaim ).." )"
+            textBtn = textBtn .. " ( +"..tostring( HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) ).." )"
         end
 
         draw.SimpleText( textBtn, "QuanticoNormal", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
-    ReclaimButton.DoClick = function()
-        print("Reclaiming vehicle", QueueOnPadPanel.OnPadEnt)
-        --HALOARMORY.Requisition.ReclaimVehicle( QueueOnPadPanel.OnPadEnt )
+    ReclaimButton.DoClick = function( self )
+        --print("Reclaiming vehicle", QueueOnPadPanel.OnPadEnt)
+
+        self:SetEnabled( false )
+
+        HALOARMORY.VEHICLES.NETWORK.RemoveVehicle( PadEnt, QueueOnPadPanel.OnPadEnt, function( success )
+            --print("Reclaimed vehicle", success)
+
+            if success then
+                self:SetEnabled( true )
+            end
+        end )
 
     end
 
@@ -846,11 +852,9 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         if IsValid( self.OnPadEnt ) then
             // RECLAIM BUTTON
             ReclaimButton:SetVisible( true )
-            NetworkName.Reclaim = 0
+            NetworkName.Reclaim = HALOARMORY.Requisition.RefundAmount( self.OnPadEnt )
 
-            if self.OnPadEnt.GetReclaimAmount then
-                NetworkName.Reclaim = self.OnPadEnt:GetReclaimAmount()
-            end
+            --print("Reclaim amount", NetworkName.Reclaim)
 
             // MODEL
             if self.OnPadEnt.GetModel then

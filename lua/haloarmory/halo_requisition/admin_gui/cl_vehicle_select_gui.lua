@@ -45,34 +45,13 @@ local VehicleBeingEdited = NewTemplateVehicle
 
 
 
-
 function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
-
-    local VehicleClass = VehicleBeingEdited["entity"]
-
-    --print( VehicleClass )
-
-    if VehicleClass == "" then return end
-
-    local Vehicle_Ent = scripted_ents.Get( VehicleClass )
-
-    if Vehicle_Ent == nil then
-        // Might be Simfphys
-        Vehicle_Ent = list.Get("simfphys_vehicles")[VehicleClass]
-    end
-
-    --print( Vehicle_Ent )
+    local Vehicle_Ent, VehicleModel, VehiclePrintName = HALOARMORY.Requisition.GetModelAndNameFromVehicle( VehicleBeingEdited["entity"] )
 
     if not Vehicle_Ent then return end
 
-    local VehiclePrintName = Vehicle_Ent.PrintName or Vehicle_Ent.Name
-    local VehicleModel = Vehicle_Ent.Model or Vehicle_Ent.MDL
-
     --print( VehiclePrintName, VehicleModel )
-
-    // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
-    if not string.EndsWith( VehicleModel, ".mdl" ) then return end
 
 
     if HALOARMORY.VEHICLES.ADMIN_GUI.MainFrameEditor then
@@ -1108,12 +1087,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( The_Vehicle )
     local function UpdateAndCheckVehicleClass()
         local VehicleClass = VehicleClassTextEntry:GetValue()
 
-        local Vehicle_Ent = scripted_ents.Get( VehicleClass )
-
-        if Vehicle_Ent == nil then
-            // Might be Simfphys
-            Vehicle_Ent = list.Get("simfphys_vehicles")[VehicleClass]
-        end
+        local Vehicle_Ent, VehicleModel, VehiclePrintName = HALOARMORY.Requisition.GetModelAndNameFromVehicle( VehicleBeingEdited["entity"] )
 
         if not Vehicle_Ent then
             VehicleClassButton:SetDisabled( true )
@@ -1155,14 +1129,8 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( The_Vehicle )
     VehicleClassButton.DoClick = function()
 
         local VehicleClass = VehicleClassTextEntry:GetValue()
-        local Vehicle_Ent = scripted_ents.Get( VehicleClass )
+        local Vehicle_Ent, VehicleModel, VehiclePrintName = HALOARMORY.Requisition.GetModelAndNameFromVehicle( VehicleClass )
 
-        if Vehicle_Ent == nil then
-            // Might be Simfphys
-            Vehicle_Ent = list.Get("simfphys_vehicles")[VehicleClass]
-        end
-
-        local VehiclePrintName = Vehicle_Ent.PrintName or Vehicle_Ent.Name
         if VehiclePrintName then
             VehicleNameTextEntry:SetValue( tostring( VehiclePrintName ) )
 
