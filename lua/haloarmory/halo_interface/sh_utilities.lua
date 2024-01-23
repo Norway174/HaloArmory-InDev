@@ -10,7 +10,11 @@ function HALOARMORY.INTERFACE.PrettyFormatNumber(number, delimiter)
         delimiter = ","
     end
 
+    if not isnumber(number) then return 0 end
+
     local i, j, minus, int, fraction = tostring(number):find('([-]?)(%d+)([.]?%d*)')
+
+    if not int then return 0 end
 
     -- reverse the int-string and append a comma to all blocks of 3 digits
     int = int:reverse():gsub("(%d%d%d)", "%1" .. delimiter)
