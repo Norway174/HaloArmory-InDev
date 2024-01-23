@@ -846,7 +846,9 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( The_Vehicle )
     VehicleFileNameTextEntry:Dock( FILL )
     VehicleFileNameTextEntry:SetValue( tostring( VehicleBeingEdited["filename"] ) )
 
-    if not NewVehicle then
+    if NewVehicle then
+        VehicleBeingEdited["old_filename"] = nil
+    else
         VehicleBeingEdited["old_filename"] = VehicleBeingEdited["filename"]
     end
     
@@ -1281,6 +1283,8 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
         VehicleEditButton.DoClick = function()
 
             --HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor( value )
+
+            NewVehicle = false
 
             net.Start("HALOARMORY.VEHICLES.ADMIN")
                 net.WriteString("EDITVEHICLE")
