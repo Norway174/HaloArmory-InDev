@@ -169,22 +169,22 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
 
             local Vehicle = nil
 
-            print( "Spawning vehicle", vehicle_ent)
+            --print( "Spawning vehicle", vehicle_ent)
 
             if simfphys and list.Get( "simfphys_vehicles" )[ vehicle_ent ] then
-                print( "Spawning simfphys vehicle" )
+                --print( "Spawning simfphys vehicle" )
                 Vehicle = simfphys.SpawnVehicleSimple( vehicle_ent, Pos, Ang )
 
 
             elseif list.Get("Vehicles")[vehicle_ent] then
                 local engineVeh = list.Get("Vehicles")[vehicle_ent]
-                print( "Spawning engine vehicle", engineVeh )
+                --print( "Spawning engine vehicle", engineVeh )
 
-                PrintTable( engineVeh )
+                --PrintTable( engineVeh )
 
                 if not engineVeh.Class or not engineVeh.Model then return end
 
-                print( "Spawning engine vehicle", engineVeh.Class, engineVeh.Model, engineVeh.KeyValues.vehiclescript )
+                --print( "Spawning engine vehicle", engineVeh.Class, engineVeh.Model, engineVeh.KeyValues.vehiclescript )
 
                 Vehicle = ents.Create( engineVeh.Class )
                 Vehicle:SetModel( engineVeh.Model )
@@ -199,7 +199,7 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
 
 
             else
-                print( "Spawning normal vehicle" )
+                --print( "Spawning normal vehicle" )
                 Vehicle = ents.Create( vehicle_ent )
 
                 Vehicle:SetPos( self:GetPos() + Vector( 0, 0, 100 ) )
@@ -211,11 +211,6 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
 
             --Vehicle.HALOARMORY_COST = VehicleTable.cost
             Vehicle:SetNW2Int( "HALOARMORY_COST", VehicleTable.cost )
-
-            
-
-            //if not IsValid( Vehicle ) then Vehicle:Remove() return end
-
 
             // Set the options here
             if VehicleInQueue.options.color then
@@ -242,15 +237,22 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
                 end
             end
 
-            timer.Simple( 0.1, function()
+            timer.Simple( 0.5, function()
                 // If vehicle is frozen, unfreeze it
                 local physVeh = Vehicle:GetPhysicsObject()
                 if IsValid( physVeh ) then
-                    print( "Unfreezing vehicle", not physVeh:IsMotionEnabled() )
+                    --print( "Unfreezing vehicle", not physVeh:IsMotionEnabled() )
                     if not physVeh:IsMotionEnabled() then
                         physVeh:EnableMotion( true )
                     end
                 end
+
+                // Set the AI Team of the vehicle to the player's AI Team
+                if Vehicle.SetAITEAM then
+                    local plyAITeam = ply:lfsGetAITeam()
+                    Vehicle:SetAITEAM( plyAITeam )
+                end
+
             end )
 
 
