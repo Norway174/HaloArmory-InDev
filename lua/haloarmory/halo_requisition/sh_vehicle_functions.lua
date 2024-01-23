@@ -54,6 +54,8 @@ function HALOARMORY.Requisition.RefundAmount( vehicle )
 
     --PrintTable( vehicle:GetTable() )
 
+    refund_amount = math.Round( refund_amount )
+
     return refund_amount
 end
 
