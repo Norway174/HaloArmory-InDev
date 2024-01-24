@@ -1,6 +1,7 @@
 HALOARMORY.MsgC("Shared Vehicle Config Loaded!")
 
 HALOARMORY.VEHICLES = HALOARMORY.VEHICLES or {}
+HALOARMORY.Requisition = HALOARMORY.Requisition or {}
 
 if SERVER then
     // Load vehicles server side
