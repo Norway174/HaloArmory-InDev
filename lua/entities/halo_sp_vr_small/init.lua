@@ -7,13 +7,13 @@ include("shared.lua")
 
 function ENT:PostInit()
 
-    HALOARMORY.Requisition.AddVehiclePad( self )
+    --HALOARMORY.Requisition.AddVehiclePad( self )
 
 end
 
 function ENT:OnRemove()
 
-    HALOARMORY.Requisition.RemoveVehiclePad( self )
+    --HALOARMORY.Requisition.RemoveVehiclePad( self )
 
 end
 
