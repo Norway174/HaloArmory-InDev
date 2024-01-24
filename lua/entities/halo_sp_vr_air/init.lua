@@ -6,8 +6,6 @@ include("shared.lua")
 
 function ENT:PostInit()
 
-    HALOARMORY.Requisition.AddVehiclePad( self )
-
     self:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 
 end
