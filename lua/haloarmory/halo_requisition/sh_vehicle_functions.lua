@@ -7,17 +7,21 @@ if SERVER then
     HALOARMORY.VEHICLES.ADMIN = HALOARMORY.VEHICLES.ADMIN or {}
     HALOARMORY.VEHICLES.LIST = HALOARMORY.VEHICLES.LIST or {}
 
-
     function HALOARMORY.VEHICLES.INIT()
         HALOARMORY.MsgC("Loading Vehicles...")
 
-        HALOARMORY.VEHICLES.ADMIN.LOADVEHICLES()
+        if isfunction( HALOARMORY.VEHICLES.ADMIN.LOADVEHICLES ) then
+            HALOARMORY.VEHICLES.ADMIN.LOADVEHICLES()
 
-        HALOARMORY.MsgC("Loaded Vehicles:", table.Count( HALOARMORY.VEHICLES.LIST ) )
+            HALOARMORY.MsgC("Loaded Vehicles:", table.Count( HALOARMORY.VEHICLES.LIST ) )
+        else
+            HALOARMORY.MsgC("Too soon! Unable to load vehicles at this time." )
+        end
+
     end
 
     hook.Add("InitPostEntity", "HALOARMORY.VEHICLES.INIT", HALOARMORY.VEHICLES.INIT)
-    HALOARMORY.VEHICLES.INIT()
+    timer.Simple( 5, HALOARMORY.VEHICLES.INIT )
 end
 
 
