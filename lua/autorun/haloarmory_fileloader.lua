@@ -14,7 +14,7 @@ local loadFolders = {
     "haloarmory/halo_ships", -- Adds persistent ships. And supports save/load ship presets.
     "haloarmory/halo_logistics", -- Adds a logistics system for genering and using supplies.
     "haloarmory/halo_requisition", -- Adds a requisition system for aquiaring vehicles, using supplies.
-    --"haloarmory/halo_npcs", -- Experimental NPCs. Didn't work.
+    "haloarmory/halo_npcs", -- Experimental NPCs.
     "haloarmory/vehicle_pickup", -- Adds the ability to pick up vehicles/items and supplies, with Pelicans or other vehicles.
     --"haloarmory/halo_redux", -- Used for the infmap. Experimental. Speeds up Pelicans flights.
     "haloarmory/halo_requisition", -- Adds the ability to requisition vehicles.
@@ -60,7 +60,7 @@ function HALOARMORY.LoadAllFile(fileDir)
     local files, dirs = file.Find(fileDir .. "*", "LUA")
     
     for _, subFilePath in ipairs(files) do
-        if (string.match(subFilePath, ".lua") and not ignoreFiles[subFilePath]) then
+        if (string.match(subFilePath, ".lua", -4) and not ignoreFiles[subFilePath]) then
             
             local fileRealm = string.sub(subFilePath, 1, 2)
 
