@@ -10,7 +10,12 @@ function ENT:Draw3D2D( ent )
 
 
     // Draw a header that says "UNSC Vehicle Requesition"
-    draw.DrawText( "UNSC Vehicle Requesition", "HK_QuanticoHeader", self.frameW * .5, 330, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+    local headerText = "UNSC Vehicle Requesition"
+    if self.GetConsoleName then
+        headerText = self:GetConsoleName()
+    end
+
+    draw.DrawText( headerText, "HK_QuanticoHeader", self.frameW * .5, 330, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 
 
     // Draw a large button that says "Request Vehicle"

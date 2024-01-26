@@ -12,9 +12,11 @@ ENT.Editable = true
 
 function ENT:CustomDataTables()
 
-    self:NetworkVar( "String", 0, "ConsoleID", { KeyName = "ConsoleID",	Edit = { type = "String", order = 1 } } )
+    self:NetworkVar( "String", 0, "ConsoleName", { KeyName = "ConsoleName",	Edit = { type = "String", order = 1 } } )
+    self:NetworkVar( "String", 1, "ConsoleID", { KeyName = "ConsoleID",	Edit = { type = "String", order = 2 } } )
 
     if SERVER then
+        self:SetConsoleName( self.PrintName )
         --self:SetConsoleID( "UNSC" )
     end
 
