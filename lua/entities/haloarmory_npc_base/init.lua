@@ -29,6 +29,7 @@ include("shared.lua")
 
 function ENT:Initialize()
     self:SetModel( "models/props_borealis/bluebarrel001.mdl" )
+    print("Init NPC Entity", self )
     timer.Simple( 0.01, function()
         self:PostInit()
     end)
