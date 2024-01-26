@@ -30,19 +30,29 @@ include("shared.lua")
 function ENT:Initialize()
     self:SetModel( "models/props_borealis/bluebarrel001.mdl" )
     print("Init NPC Entity", self )
-    timer.Simple( 0.01, function()
-        self:PostInit()
-    end)
+    -- timer.Simple( 0.01, function()
+    --     self:PostInit()
+    -- end)
+end
+
+ENT.Executed = false
+function ENT:Think()
+    if not self.NPCTable and not istable( self.NPCTable ) then return end
+    if self.Executed then return end
+
+    self.Executed = true
+    self:PostInit()
+
 end
 
 
 function ENT:PostInit()
-    if not self.NPCTable then return end
-
-    print("Init NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
+    print("Post-Init NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
     if istable( self.NPCTable ) then
-        --PrintTable( self.NPCTable )
+        PrintTable( self.NPCTable )
     end
+
+    if not self.NPCTable then return end
 
     -- print("--------------------")
     -- if istable( self:GetTable() ) then
