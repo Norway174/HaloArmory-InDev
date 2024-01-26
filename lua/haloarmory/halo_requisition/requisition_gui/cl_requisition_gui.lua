@@ -331,7 +331,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, Color(37, 133, 18, 210) )
 
             // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(133, 18, 18, 210) )
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(124, 27, 27, 206) )
             
             // Reclaim Amount Progress
             draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * Progress, fontHeight + 5, (w - 10) * ProgressCostReclaim, 30, Color(18, 72, 133, 210) )
