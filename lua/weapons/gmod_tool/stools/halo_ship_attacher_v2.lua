@@ -228,7 +228,7 @@ end
 
 
 // Add a fallback method to add the prop to the ship with a right click context menu
-properties.Add( "ship_attacher", {
+properties.Add( "ship_attacher_v2", {
     MenuLabel = "HALOARMORY - Toggle Attach", -- Name to display on the context menu
     Order = 10001, -- The order to display this property relative to other properties
     MenuIcon = "icon16/attach.png", -- The icon to display next to the property
@@ -238,6 +238,7 @@ properties.Add( "ship_attacher", {
         if ( !IsValid( ent ) ) then return false end
         if ( ent:IsPlayer() ) then return false end
         
+        if ( not IsValid( ply:GetTool() ) ) then return false end
         if ( not IsValid( ply:GetTool():GetEnt( 1 ) ) ) then return false end
 
         return true

@@ -158,6 +158,7 @@ properties.Add( "ship_attacher", {
         if ( !IsValid( ent ) ) then return false end
         if ( ent:IsPlayer() ) then return false end
         
+        if ( not IsValid( ply:GetTool() ) ) then return false end
         if ( not IsValid( ply:GetTool().SelectedShip ) ) then return false end
 
         return true
