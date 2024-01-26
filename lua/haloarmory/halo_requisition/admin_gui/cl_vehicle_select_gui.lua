@@ -1324,7 +1324,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
 end
 
 
-net.Receive("HALOARMORY.VEHICLES.ADMIN", function(len, ply)
+net.Receive("HALOARMORY.VEHICLES.ADMIN", function( len )
 
     local Type = net.ReadString()
 
