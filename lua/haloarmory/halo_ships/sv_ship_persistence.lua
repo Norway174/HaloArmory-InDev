@@ -30,30 +30,34 @@ end
 
 function HALOARMORY.Ships.AddProp(ship, prop)
 
-    if not IsValid(ship) or not IsValid(prop) then return end
-    if not ship.HALOARMORY_Attached then return end
+    if not IsValid(ship) or not ship.HALOARMORY_Attached then return false, "Invalid ship" end
+    if not IsValid(prop) then return false, "Invalid object" end
+
+    if table.HasValue(ship.HALOARMORY_Attached, prop) then return false, "Object attached" end
 
     // Attach
     table.insert(ship.HALOARMORY_Attached, prop)
     ship:DeleteOnRemove( prop )
+    prop.HALOARMORY_AttachedTo = ship
     print("Attached", prop, "to", ship)
 
-    return true
+    return true, "Object attached"
 end
 
 function HALOARMORY.Ships.RemoveProp(ship, prop)
 
-    if not IsValid(ship) or not IsValid(prop) then return end
-    if not ship.HALOARMORY_Attached then return end
+    if not IsValid(ship) or not ship.HALOARMORY_Attached then return false, "Invalid ship" end
+    if not IsValid(prop) then return false, "Invalid object" end
 
-    if not table.HasValue(ship.HALOARMORY_Attached, prop) then return end
+    if not table.HasValue(ship.HALOARMORY_Attached, prop) then return false, "Object is not attached" end
 
     // Detach
     table.RemoveByValue(ship.HALOARMORY_Attached, prop)
     ship:DontDeleteOnRemove( prop )
+    prop.HALOARMORY_AttachedTo = nil
     print("Detached", prop, "from", ship)
 
-    return true
+    return true, "Object detached"
 end
 
 
