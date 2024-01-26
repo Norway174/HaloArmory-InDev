@@ -69,7 +69,8 @@ function ENT:SetupDataTables()
     self:NetworkVar( "String", 1, "BoxName", { KeyName = "Name",	Edit = { type = "Generic", order = 1 } } )
     self:NetworkVar( "Vector", 0, "HeaderColor", { KeyName = "HeaderColor",	Edit = { type = "VectorColor", order = 3 } } )
     self:NetworkVar( "Int", 2, "MaxCapacity", { KeyName = "MaxCapacity",	Edit = { title = "Max Capacity", type = "Int", order = 6, min = 0, max = 999999999 } } )
-    self:NetworkVar( "Int", 3, "Stored", { KeyName = "Stored",	Edit = { title = "Stored Supplies", type = "Int", order = 7, min = 0, max = self.MaxCapacity } } )
+    --self:NetworkVar( "Int", 3, "Stored", { KeyName = "Stored",	Edit = { title = "Stored Supplies", type = "Int", order = 7, min = 0, max = self.MaxCapacity } } )
+    self:OnMaxCapUpdate( "", 0, self.MaxCapacity )
 
     if SERVER then
         self:SetBoxName( self.DeviceName )
@@ -82,5 +83,5 @@ function ENT:SetupDataTables()
 end
 
 function ENT:OnMaxCapUpdate( name, old, new )
-    self:NetworkVar( "Int", 3, "Stored", { KeyName = "RateM",	Edit = { title = "Stored", type = "Int", order = 7, min = 0, max = new } } )
+    self:NetworkVar( "Int", 3, "Stored", { KeyName = "Stored",	Edit = { title = "Stored Supplies", type = "Int", order = 7, min = 0, max = new } } )
 end
