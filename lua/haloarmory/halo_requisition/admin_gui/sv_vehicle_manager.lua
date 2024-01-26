@@ -93,6 +93,10 @@ util.AddNetworkString("HALOARMORY.VEHICLES.ADMIN")
 
 net.Receive("HALOARMORY.VEHICLES.ADMIN", function(len, ply)
 
+    if not ULib.ucl.query( ply, "Vehicle Editor" ) then
+        return
+    end
+
     local Type = net.ReadString()
 
     if Type == "GETVEHICLES" then

@@ -1204,6 +1204,11 @@ end
 
 function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
 
+    if not ULib.ucl.query( LocalPlayer(), "Vehicle Editor" ) then
+        HALOARMORY.MsgC( Color( 255, 0, 0 ), "You do not have access to this command!" )
+        return "No Access!"
+    end
+
     if HALOARMORY.VEHICLES.ADMIN_GUI.MainFrame then
         HALOARMORY.VEHICLES.ADMIN_GUI.MainFrame:Remove()
         HALOARMORY.VEHICLES.ADMIN_GUI.MainFrame = nil

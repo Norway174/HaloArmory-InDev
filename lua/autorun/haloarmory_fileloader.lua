@@ -114,3 +114,13 @@ HALOARMORY.MsgC("---- HALORP ARMORY LOADING ----")
 HALOARMORY.LoadAllFonts()
 HALOARMORY.LoadAllFiles()
 HALOARMORY.MsgC("---- HALORP ARMORY END ----")
+
+if SERVER then
+    hook.Add( "InitPostEntity", "HaloArmory.ULXIntegration", function()
+        if not ULib then HALOARMORY.MsgC( "HaloArmory ULX integration failed, no ULib." ) return end
+
+        ULib.ucl.registerAccess("Vehicle Editor", "admin", "Let's the user edit vehicles.", "HALOARMORY")
+
+        HALOARMORY.MsgC( "HaloArmory ULX integration completed." )
+    end )
+end
