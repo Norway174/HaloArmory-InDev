@@ -28,7 +28,8 @@ include("shared.lua")
 
 
 function ENT:Initialize()
-    self:SetModel( "models/m_anm.mdl" )
+    self:SetModel( "models/props_borealis/bluebarrel001.mdl" )
+    --self:SetColor( Color( 255, 255, 255, 0) )
     --print("Init NPC Entity", self )
     -- timer.Simple( 0.01, function()
     --     self:PostInit()
