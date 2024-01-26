@@ -1204,7 +1204,7 @@ end
 
 function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
 
-    if not ULib.ucl.query( LocalPlayer(), "Vehicle Editor" ) then
+    if not ULib or not ULib.ucl.query( ply, "Vehicle Editor" ) then
         HALOARMORY.MsgC( Color( 255, 0, 0 ), "You do not have access to this command!" )
         return "No Access!"
     end

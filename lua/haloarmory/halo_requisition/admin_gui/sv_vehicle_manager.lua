@@ -93,7 +93,7 @@ util.AddNetworkString("HALOARMORY.VEHICLES.ADMIN")
 
 net.Receive("HALOARMORY.VEHICLES.ADMIN", function(len, ply)
 
-    if not ULib.ucl.query( ply, "Vehicle Editor" ) then
+    if not ULib or not ULib.ucl.query( ply, "Vehicle Editor" ) then
         return
     end
 
