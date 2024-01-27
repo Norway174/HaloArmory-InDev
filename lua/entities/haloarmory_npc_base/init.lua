@@ -29,6 +29,9 @@ include("shared.lua")
 
 function ENT:Initialize()
     self:SetModel( "models/props_borealis/bluebarrel001.mdl" )
+
+    print("HALOARMRY - Init NPC Entity", self )
+
     --self:SetColor( Color( 255, 255, 255, 0) )
     --print("Init NPC Entity", self )
     -- timer.Simple( 0.01, function()
@@ -48,7 +51,7 @@ end
 
 
 function ENT:PostInit()
-    print("Post-Init NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
+    print("HALOARMRY - Post-Init NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
     if istable( self.NPCTable ) then
         --PrintTable( self.NPCTable )
     end
