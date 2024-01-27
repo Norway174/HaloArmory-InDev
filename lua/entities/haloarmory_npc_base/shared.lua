@@ -7,4 +7,4 @@ ENT.Category = "HALOARMORY - NPC"
 ENT.Author = "Norway174"
 ENT.Spawnable = false
 
-ENT.RenderGroup = RENDERGROUP_OTHER
+ENT.RenderGroup = RENDERGROUP_OPAQUE

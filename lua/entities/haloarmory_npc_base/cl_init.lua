@@ -5,8 +5,8 @@ include('shared.lua')
    Purpose: Draw the model in-game.
    Remember, the things you render first will be underneath!
 ---------------------------------------------------------]]
--- function ENT:Draw()
+function ENT:Draw()
 
---     --self:DrawModel()
+   self:DrawModel()
 
--- end
+end
