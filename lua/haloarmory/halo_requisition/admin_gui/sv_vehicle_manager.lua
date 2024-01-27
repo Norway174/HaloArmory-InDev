@@ -93,8 +93,12 @@ util.AddNetworkString("HALOARMORY.VEHICLES.ADMIN")
 
 net.Receive("HALOARMORY.VEHICLES.ADMIN", function(len, ply)
 
-    if not ULib or not ULib.ucl.query( ply, "Vehicle Editor" ) then
-        return
+    if ULib and not ULib.ucl.query( ply, "Vehicle Editor" ) then
+        --chat.AddText( Color( 255, 0, 0 ), "You do not have access to this command!" )
+        return "No Access!"
+    elseif not ULib and not ply:IsAdmin() then
+        --chat.AddText( Color( 255, 0, 0 ), "You do have access to this command!" )
+        return "No Access!"
     end
 
     local Type = net.ReadString()
