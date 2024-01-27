@@ -53,7 +53,10 @@ function ENT:PostInit()
         --PrintTable( self.NPCTable )
     end
 
-    if not self.NPCTable then return end
+    if not self.NPCTable then
+        self.Executed = false
+        return
+    end
 
     -- print("--------------------")
     -- if istable( self:GetTable() ) then
