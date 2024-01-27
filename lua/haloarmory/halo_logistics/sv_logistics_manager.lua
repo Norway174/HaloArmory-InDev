@@ -391,8 +391,12 @@ net.Receive( "HALOARMORY.Logistics.NETWORKS.ADD", function( len, ply )
 
     HALOARMORY.Logistics.RegisterNetwork( name )
 
+
     timer.Simple( 0.5, function()
+        local the_network = HALOARMORY.Logistics.SyncNetworks()
+
         net.Start("HALOARMORY.Logistics.NETWORKS.ADD")
+        net.WriteTable( the_network )
         net.Send( ply )
     end )
 end )
@@ -405,7 +409,10 @@ net.Receive( "HALOARMORY.Logistics.NETWORKS.REMOVE", function( len, ply )
     HALOARMORY.Logistics.RemoveNetwork( name )
 
     timer.Simple( 0.5, function()
+        local the_network = HALOARMORY.Logistics.SyncNetworks()
+
         net.Start("HALOARMORY.Logistics.NETWORKS.ADD")
+        net.WriteTable( the_network )
         net.Send( ply )
     end )
 end )
