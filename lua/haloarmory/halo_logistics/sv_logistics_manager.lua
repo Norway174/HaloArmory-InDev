@@ -144,8 +144,8 @@ function HALOARMORY.Logistics.RegisterNetwork( name )
 
     local network = {}
     network.Name = name
-    network.MapOnly = false
-    network.MaxSupplies = 100
+    network.MapOnly = true
+    network.MaxSupplies = 10000
     network.Supplies = 0
 
     HALOARMORY.Logistics.Networks[name] = network
