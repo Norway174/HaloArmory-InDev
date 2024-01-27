@@ -7,6 +7,9 @@ include('shared.lua')
 ---------------------------------------------------------]]
 function ENT:Draw()
 
-   self:DrawModel()
+   if LocalPlayer():IsAdmin() then
+      self:DrawModel()
+   end
+   --self:DrawModel()
 
 end
