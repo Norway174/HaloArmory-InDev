@@ -24,6 +24,13 @@ include("shared.lua")
 		[5]	=	npc_halo3_m7
 		[6]	=	npc_halo3_m90
 
+
+        lua_run print( Entity(2301):Fire( "Press" ) )
+> print( Entity(2301):GetName() )...
+BaseLightsToggle
+
+76 85 63
+
  ]]
 
 
@@ -41,6 +48,8 @@ end
 
 ENT.Executed = false
 function ENT:Think()
+    print("HALOARMRY - Think NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
+    
     if not self.NPCTable and not istable( self.NPCTable ) then return end
     if self.Executed then return end
 
