@@ -68,7 +68,7 @@ end
 function ENT:SetupDataTables()
 
     self:UpdateGlobalNetworks()
-    self:NetworkVar( "String", 1, "DeviceName", { KeyName = "DeviceName",	Edit = { type = "String", order = 2 } } )
+    self:NetworkVar( "String", 1, "DeviceName", { KeyName = "DeviceName",	Edit = { type = "Generic", order = 2 } } )
     self:NetworkVar( "String", 2, "NetworkTable" )
 
     if SERVER then
