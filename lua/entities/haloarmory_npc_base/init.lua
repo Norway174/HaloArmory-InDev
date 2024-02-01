@@ -25,10 +25,6 @@ include("shared.lua")
 		[6]	=	npc_halo3_m90
 
 
-        lua_run print( Entity(2301):Fire( "Press" ) )
-> print( Entity(2301):GetName() )...
-BaseLightsToggle
-
 76 85 63
 
  ]]
