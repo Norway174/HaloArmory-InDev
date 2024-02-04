@@ -44,7 +44,7 @@ end
 
 ENT.Executed = false
 function ENT:Think()
-    print("HALOARMRY - Think NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
+    print("HALOARMRY - Think NPC Entity", self, self.NPCTable )
     
     if not self.NPCTable and not istable( self.NPCTable ) then return end
     if self.Executed then return end
@@ -56,7 +56,7 @@ end
 
 
 function ENT:PostInit()
-    print("HALOARMRY - Post-Init NPC Entity", self, self.NPCTable, table.Count( self.NPCTable ) )
+    print("HALOARMRY - Post-Init NPC Entity", self, self.NPCTable )
     if istable( self.NPCTable ) then
         --PrintTable( self.NPCTable )
     end
