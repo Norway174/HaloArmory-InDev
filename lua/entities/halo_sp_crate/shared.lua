@@ -77,13 +77,15 @@ function ENT:SetupDataTables()
         self:SetHeaderColor( self:RandomColor():ToVector() )
         self:SetMaxCapacity( self.MaxCapacity )
         self:SetStored( self.StoredSupplies )
-        self:NetworkVarNotify( "MaxCapacity", self.OnMaxCapUpdate )
     end
 
+    self:NetworkVarNotify( "MaxCapacity", self.OnMaxCapUpdate )
 end
 
 function ENT:OnMaxCapUpdate( name, old, new )
-    timer.Simple(0.1, function()
-        self:NetworkVar( "Int", 3, "Stored", { KeyName = "Stored",	Edit = { title = "Stored Supplies", type = "Int", order = 7, min = 0, max = new } } )
-    end)
+    self:NetworkVar( "Int", 3, "Stored", { KeyName = "Stored",	Edit = { title = "Stored Supplies", type = "Int", order = 7, min = 0, max = new } } )
+
+    if SERVER and ( self:GetStored( ) >= new ) then
+        self:SetStored( new )
+    end
 end
