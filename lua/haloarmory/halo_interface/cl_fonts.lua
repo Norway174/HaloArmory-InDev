@@ -87,6 +87,21 @@ surface.CreateFont( "SP_QuanticoSmall", {
     antialias = false,
 } )
 
+--[[ 
+################################
+||                            ||
+||        CONTROLPANEL        ||
+||        Requisition         ||
+||                            ||
+################################
+ ]]
+ surface.CreateFont( "SP_QuanticoPad", {
+    font = "Quantico",
+    size = 250,
+    weight = 400,
+    antialias = false,
+} )
+
 
 --[[ 
 ################################
