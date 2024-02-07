@@ -7,6 +7,8 @@ ENT.Category = "HALOARMORY - Logistics"
 ENT.Author = "Norway174"
 ENT.Spawnable = false
 
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+
 ENT.Editable = true
 
 ENT.HALOARMORY_Device = true
