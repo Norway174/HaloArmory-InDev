@@ -156,12 +156,6 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
                 return
             end
 
-            local success, new_supplies = HALOARMORY.Logistics.AddNetworkSupplies( network_name, -VehicleTable.cost )
-
-            if not success then
-                return
-            end
-
             local vehicle_ent = VehicleTable.entity
 
             local Pos = self:GetPos() + self.VehicleSpawnPos
@@ -189,7 +183,9 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
                 Vehicle = ents.Create( engineVeh.Class )
                 Vehicle:SetModel( engineVeh.Model )
 
-                Vehicle:SetPos( self:GetPos() + Vector( 0, 0, 100 ) )
+
+                // Set the vehicle position
+                Vehicle:SetPos( Pos )
                 Vehicle:SetAngles( self:GetAngles() + Angle( 0, 180, 0 ) )
 
                 Vehicle:SetKeyValue( "vehiclescript", engineVeh.KeyValues.vehiclescript ) 
@@ -202,7 +198,7 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
                 --print( "Spawning normal vehicle" )
                 Vehicle = ents.Create( vehicle_ent )
 
-                Vehicle:SetPos( self:GetPos() + Vector( 0, 0, 100 ) )
+                Vehicle:SetPos( Pos )
                 Vehicle:SetAngles( self:GetAngles() + Angle( 0, -90, 0 ) )
 
                 Vehicle:Spawn()
@@ -260,6 +256,19 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
 
             // Set the owner of the vehicle
             Vehicle:CPPISetOwner(ply)
+
+            // Remove the supplies from the network
+            if IsValid( Vehicle ) then
+                
+                local success, new_supplies = HALOARMORY.Logistics.AddNetworkSupplies( network_name, -VehicleTable.cost )
+
+                // If the supplies were not removed, remove the vehicle.
+                if not success then
+                    Vehicle:Remove()
+                    return
+                end
+                
+            end
 
         end
     
