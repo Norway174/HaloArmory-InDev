@@ -96,9 +96,8 @@ function ENT:DrawTranslucent()
         self:DrawModel()
     end
 
-    local pos = self:GetPos() + self.VehicleSpawnPos
-
-    render.DrawWireframeSphere( pos, 100, 10, 10, Color( 9, 177, 255), true)
+    --local pos = self:GetPos() + self.VehicleSpawnPos
+    --render.DrawWireframeSphere( pos, 100, 10, 10, Color( 9, 177, 255), true)
 
 
     local Posit = self:LocalToWorld(self.PanelPos)
