@@ -92,7 +92,7 @@ end
 
 
 function ENT:DrawTranslucent()
-    if LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP then
+    if LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP && LocalPlayer():IsAdmin() then
         self:DrawModel()
     end
 
@@ -119,6 +119,11 @@ function ENT:DrawTranslucent()
 
         DrawCustomWidthCircle(0, 0, 101, 7, Color(0, 0, 0), CalculateNumberBasedOnDistance( self:GetPos() ) )
         DrawCustomWidthCircle(0, 0, 100, 5, Color(255, 255, 255, 255), CalculateNumberBasedOnDistance( self:GetPos() ) )
+
+
+        if LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP && LocalPlayer():IsAdmin() then
+            draw.SimpleTextOutlined("▼", "SP_QuanticoHeader", 0, 140, Color(255, 255, 255, 50), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 50))
+        end
 
     cam.End3D2D()
 
