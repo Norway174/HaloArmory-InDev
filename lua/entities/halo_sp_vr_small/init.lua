@@ -25,7 +25,7 @@ function ENT:UpdateOnPad()
     local nearby_ent = {}
 
     // Remove self from the table.
-    for k, v in pairs( ents.FindInSphere( pos, 100 ) ) do
+    for k, v in pairs( ents.FindInSphere( pos, self.VehicleSpawnRadius ) ) do
 
         //print( "Found:", v:GetClass() )
         if v == self then continue end
@@ -93,12 +93,16 @@ function ENT:UpdateOnPad()
 
 end
 
+function ENT:AirPadThink()
+end
 
 function ENT:Think()
 
     self:NextThink( CurTime() + 1 )
 
     self:UpdateOnPad()
+
+    self:AirPadThink()
 
 end
 

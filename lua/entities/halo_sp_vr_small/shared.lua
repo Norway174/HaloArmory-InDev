@@ -21,9 +21,13 @@ ENT.VehicleQueue = {}
 
 ENT.VehicleSpawnPos = Vector( 0, 0, 10 )
 ENT.VehicleSpawnAng = Angle( 0, -90, 0 )
+ENT.VehicleSpawnRadius = 100
 
 ENT.DeviceModel = "models/valk/h4/unsc/props/vehiclepad/vehiclepad_unsc_small.mdl"
 function ENT:SetupModel()
+end
+
+function ENT:CustomDataTablesAirPads()
 end
 
 function ENT:CustomDataTables()
@@ -51,6 +55,8 @@ function ENT:CustomDataTables()
         
         self:SetOnPad( NULL )
     end
+
+    self:CustomDataTablesAirPads()
 
 end
 
