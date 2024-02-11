@@ -48,7 +48,8 @@ function ENT:CreateLights()
         --light:SetModel("models/m_anm.mdl")
         light:SetRenderMode(RENDERMODE_TRANSCOLOR)
 
-        
+        light:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
+
     end
 
     --timer.Simple(0.1, function() self:UpdateLights() end)
