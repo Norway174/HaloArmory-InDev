@@ -31,6 +31,13 @@ if GetConVar("sv_sandshields_shieldregenamount") == nil then
 end
 
 hook.Add("PlayerLoadout", "DRCShield_ply", function(ply)
+	if not DRC then
+		print("Draconic Base not found, shields will not be enabled.")
+		hook.Remove("PlayerLoadout", "DRCShield_ply")
+		return
+	end
+
+
 	if GetConVar("sv_sandshields_enabled"):GetFloat() == 1 and (DarkRP and ( ply:getJobTable().spartan_shield or isnumber( ply:getJobTable().spartan_shield ) ) ) then
 
 		local delay = GetConVar("sv_sandshields_shielddelay"):GetFloat()
