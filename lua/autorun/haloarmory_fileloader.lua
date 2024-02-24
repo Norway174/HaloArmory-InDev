@@ -6,7 +6,7 @@ if SERVER then resource.AddWorkshop( "2851837932" ) end
 
 local loadFolders = {
     "haloarmory/ui3d2d", -- Library for 3D2D UIs. Used for in-world UIs.
-    "haloarmory/character_manager", -- In active dev. Do not enable.
+    --"haloarmory/character_manager", -- In active dev. Do not enable.
     "haloarmory/halo_armory", -- Adds the armory.
     "haloarmory/halo_ai", -- Adds the ChatGPT AI interace.
     --"haloarmory/halo_ai_old_disabled", -- The Original ChatGPT AI interace. Disabled. Used a third party server.
@@ -18,6 +18,7 @@ local loadFolders = {
     "haloarmory/vehicle_pickup", -- Adds the ability to pick up vehicles/items and supplies, with Pelicans or other vehicles.
     --"haloarmory/halo_redux", -- Used for the infmap. Experimental. Speeds up Pelicans flights.
     "haloarmory/halo_requisition", -- Adds the ability to requisition vehicles.
+    "starwarsarmory", -- OPTIONAL STARWARS CONTENT: Converts the armory to support Star Wars. Disables Halo. Requires STARWARSARMORY.
 }
 
 local ignoreFiles = {}
