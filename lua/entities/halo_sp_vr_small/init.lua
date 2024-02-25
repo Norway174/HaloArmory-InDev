@@ -262,7 +262,7 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
             Vehicle:CPPISetOwner(ply)
 
             // Remove the supplies from the network
-            if IsValid( Vehicle ) then
+            if IsValid( Vehicle ) and self.RequiresSupplies then
                 
                 local success, new_supplies = HALOARMORY.Logistics.AddNetworkSupplies( network_name, -VehicleTable.cost )
 
@@ -284,6 +284,11 @@ end
 
 
 function ENT:ReclaimVehicle( ply, vehicle )
+
+    if not self.RequiresSupplies then
+        vehicle:Remove()
+        return true
+    end
 
     local network_name = self:GetNetworkID()
 

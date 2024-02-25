@@ -237,7 +237,9 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 draw.SimpleText( VehiclePrintName, "QuanticoNormal", 60, 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
                 // Draw vehicle cost
-                draw.SimpleText( "Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(v["cost"]) .. " supplies ", "HaloArmory_24", w - 5, h - 10, Color(189,189,189), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+                if PadEnt.RequiresSupplies then
+                    draw.SimpleText( "Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(v["cost"]) .. " supplies ", "HaloArmory_24", w - 5, h - 10, Color(189,189,189), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+                end
             end
 
             // Create a DModelPanel to display the vehicle
@@ -278,81 +280,84 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
     end)
 
+    local NetworkName = nil
+
+    if PadEnt.RequiresSupplies then
+
+        // Show the network info in the top center panel
+        local NetworkInfoPanel = vgui.Create("DPanel", CenterPanel)
+        NetworkInfoPanel:Dock(TOP)
+        NetworkInfoPanel:SetTall( 100 )
+
+        NetworkInfoPanel.Paint = function(self, w, h)
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,125) )
+        end
+
+        // Create a label with the network name
+        NetworkName = vgui.Create("DLabel", NetworkInfoPanel)
+        NetworkName:SetText( "" )
+        NetworkName:SetFont("QuanticoNormal")
+        NetworkName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
+        NetworkName:Dock(FILL)
+        NetworkName:DockMargin(5,5,5,0)
+        NetworkName:SetContentAlignment(5)
+
+        NetworkName.Cost = 0
+        NetworkName.Reclaim = 0
+
+        NetworkName.Paint = function(self, w, h)
+            local label = "Network: "
+            draw.SimpleText( label, self:GetFont(), 5, 0, Color(189,189,189), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+            surface.SetFont( self:GetFont() )
+            local fontWidth, fontHeight = surface.GetTextSize( label )
+            draw.SimpleText( tostring( PadEnt:GetNetworkID() ), self:GetFont(), fontWidth + 5, 0, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
 
-    // Show the network info in the top center panel
-    local NetworkInfoPanel = vgui.Create("DPanel", CenterPanel)
-    NetworkInfoPanel:Dock(TOP)
-    NetworkInfoPanel:SetTall( 100 )
+            // Draw the network supplies and max supplies as a progress bar
 
-    NetworkInfoPanel.Paint = function(self, w, h)
-        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 0, 0, w, h, Color(0,0,0,125) )
-    end
+            // Draw the background of the progress bar
+            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, w - 10, 30, Color(0,0,0,125) )
 
-    // Create a label with the network name
-    local NetworkName = vgui.Create("DLabel", NetworkInfoPanel)
-    NetworkName:SetText( "" )
-    NetworkName:SetFont("QuanticoNormal")
-    NetworkName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
-    NetworkName:Dock(FILL)
-    NetworkName:DockMargin(5,5,5,0)
-    NetworkName:SetContentAlignment(5)
+            // Get the network supplies and max supplies
+            local controller_network = util.JSONToTable( PadEnt:GetNetworkTable() )
 
-    NetworkName.Cost = 0
-    NetworkName.Reclaim = 0
+            if istable(controller_network) then
 
-    NetworkName.Paint = function(self, w, h)
-        local label = "Network: "
-        draw.SimpleText( label, self:GetFont(), 5, 0, Color(189,189,189), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-        surface.SetFont( self:GetFont() )
-        local fontWidth, fontHeight = surface.GetTextSize( label )
-        draw.SimpleText( tostring( PadEnt:GetNetworkID() ), self:GetFont(), fontWidth + 5, 0, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+                local CurrentResource, MaxResource = controller_network.Supplies, controller_network.MaxSupplies
+
+                // Calculate the progress and the cost progress
+                local Progress = CurrentResource / MaxResource
+                local ProgressCost = NetworkName.Cost / MaxResource
+                local ProgressCostReclaim = NetworkName.Reclaim / MaxResource
+
+                local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
+
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, Color(37, 133, 18, 210) )
+
+                // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(124, 27, 27, 206) )
+                
+                // Reclaim Amount Progress
+                draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * Progress, fontHeight + 5, (w - 10) * ProgressCostReclaim, 30, Color(18, 72, 133, 210) )
 
 
-        // Draw the network supplies and max supplies as a progress bar
+                local supplies_text = "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource)
 
-        // Draw the background of the progress bar
-        draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, w - 10, 30, Color(0,0,0,125) )
+                if NetworkName.Cost ~= 0 then
+                    supplies_text = supplies_text .. " (Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber( -NetworkName.Cost ) .. " )"
+                end
 
-        // Get the network supplies and max supplies
-        local controller_network = util.JSONToTable( PadEnt:GetNetworkTable() )
+                if NetworkName.Reclaim ~= 0 then
+                    supplies_text = supplies_text .. " (Reclaim: +" .. HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) .. " )"
+                end
 
-        if istable(controller_network) then
-
-            local CurrentResource, MaxResource = controller_network.Supplies, controller_network.MaxSupplies
-
-            // Calculate the progress and the cost progress
-            local Progress = CurrentResource / MaxResource
-            local ProgressCost = NetworkName.Cost / MaxResource
-            local ProgressCostReclaim = NetworkName.Reclaim / MaxResource
-
-            local LerpColor = HALOARMORY.Logistics.Main_GUI.LerpColor( Color(37, 133, 18, 210), Color(133, 18, 18, 210), Progress, .75 )
-
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5, fontHeight + 5, (w - 10) * Progress, 30, Color(37, 133, 18, 210) )
-
-            // Draw the cost of the selected vehicle over the progress bar, as a red block to visualize how much of the resources it will cost.
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (Progress - ProgressCost), fontHeight + 5, (w - 10) * ProgressCost, 30, Color(124, 27, 27, 206) )
+                draw.SimpleText( supplies_text, self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
             
-            // Reclaim Amount Progress
-            draw.RoundedBox( HALOARMORY.Requisition.Theme["roundness"], 5 + (w - 10) * Progress, fontHeight + 5, (w - 10) * ProgressCostReclaim, 30, Color(18, 72, 133, 210) )
-
-
-            local supplies_text = "Supplies: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(CurrentResource) .. " / " .. HALOARMORY.INTERFACE.PrettyFormatNumber(MaxResource)
-
-            if NetworkName.Cost ~= 0 then
-                supplies_text = supplies_text .. " (Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber( -NetworkName.Cost ) .. " )"
             end
 
-            if NetworkName.Reclaim ~= 0 then
-                supplies_text = supplies_text .. " (Reclaim: +" .. HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) .. " )"
-            end
-
-            draw.SimpleText( supplies_text, self:GetFont(), 5, fontHeight + 5 + 30 + 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-        
         end
 
     end
-
 
     // Display a header "Selected Vehicle"
     local SelectVehicleHeader = vgui.Create("DLabel", CenterPanel)
@@ -403,7 +408,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         // Make sure VehicleModel ends with .mdl, if not, then it can't be a valid model, and we should return.
         if not string.EndsWith( VehicleModel, ".mdl" ) then return end
 
-        NetworkName.Cost = vehicle["cost"] or 0
+        if NetworkName then NetworkName.Cost = vehicle["cost"] or 0 end
 
         -- print("Selected vehicle", vehicle)
         -- if istable(vehicle) then
@@ -823,8 +828,10 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         end
         
         local textBtn = "Reclaim"
-        if NetworkName.Reclaim then
-            textBtn = textBtn .. " ( +"..tostring( HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) ).." )"
+        if PadEnt.RequiresSupplies then
+            if NetworkName and NetworkName.Reclaim then
+                textBtn = textBtn .. " ( +"..tostring( HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) ).." )"
+            end
         end
 
         draw.SimpleText( textBtn, "QuanticoNormal", w/2, h/2, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -850,12 +857,14 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         self.OnPadEnt = PadEnt:GetOnPad()
 
 
-        NetworkName.Reclaim = 0
+        if PadEnt.RequiresSupplies and NetworkName then NetworkName.Reclaim = 0 end
 
         if IsValid( self.OnPadEnt ) then
             // RECLAIM BUTTON
             ReclaimButton:SetVisible( true )
-            NetworkName.Reclaim = HALOARMORY.Requisition.RefundAmount( self.OnPadEnt )
+            if PadEnt.RequiresSupplies and NetworkName then
+                NetworkName.Reclaim = HALOARMORY.Requisition.RefundAmount( self.OnPadEnt )
+            end
 
             --print("Reclaim amount", NetworkName.Reclaim)
 

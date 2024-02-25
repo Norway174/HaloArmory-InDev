@@ -19,6 +19,8 @@ ENT.DeviceType = "vehicle_requisition_small"
 ENT.VehiclePad = true
 ENT.VehicleSize = { "small" }
 
+ENT.RequiresSupplies = true
+
 ENT.VehicleQueue = {}
 
 ENT.VehicleSpawnPos = Vector( 0, 0, 10 )
@@ -66,6 +68,10 @@ end
 
 
 function ENT:CanAfford( SelectedVehicle )
+
+    if not self.RequiresSupplies then
+        return true
+    end
 
     local controller_network = util.JSONToTable( self:GetNetworkTable() )
     if not istable(controller_network) then return false end
