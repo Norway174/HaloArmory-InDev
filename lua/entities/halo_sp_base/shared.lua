@@ -9,7 +9,7 @@ ENT.Spawnable = false
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
-ENT.IsHALOARMRY = true
+ENT.IsHALOARMORY = true
 
 ENT.Editable = true
 

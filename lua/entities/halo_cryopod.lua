@@ -10,7 +10,7 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_BOTH
 
-ENT.IsHALOARMRY = true
+ENT.IsHALOARMORY = true
 
 ENT.Model = "models/valk/h4/unsc/props/cyropod/cyropod.mdl"
 

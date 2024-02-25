@@ -10,7 +10,7 @@ ENT.Spawnable = false
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
-ENT.IsHALOARMRY = true
+ENT.IsHALOARMORY = true
 
 ENT.DeviceType = "generic_screen"
 

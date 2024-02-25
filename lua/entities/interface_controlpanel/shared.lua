@@ -7,7 +7,7 @@ ENT.Category = "HALOARMORY - UNSC"
 ENT.Author = "Norway174"
 ENT.Spawnable = false
 
-ENT.IsHALOARMRY = true
+ENT.IsHALOARMORY = true
 
 ENT.Editable = true
 
