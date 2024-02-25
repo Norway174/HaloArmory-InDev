@@ -21,6 +21,8 @@ ENT.Category		= "HALOARMORY - UNSC"
 
 ENT.Spawnable = true
 ENT.AdminOnly = false
+
+ENT.IsHALOARMRY = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 if CLIENT then
     language.Add("obj_vj_flareround", "Flare Round")

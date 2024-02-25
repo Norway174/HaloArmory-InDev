@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMRY = true
+
 ENT.Editable = true
 
 ENT.DoorModel = "models/valk/h3odst/unsc/props/doors/door_entrance1.mdl"

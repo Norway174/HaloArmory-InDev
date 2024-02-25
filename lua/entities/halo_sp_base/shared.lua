@@ -9,6 +9,8 @@ ENT.Spawnable = false
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMRY = true
+
 ENT.Editable = true
 
 ENT.HALOARMORY_Device = true

@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMRY = true
+
 ENT.Editable = true
 
 

@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
+ENT.IsHALOARMRY = true
+
 ENT.BedModel = "models/valk/h3/unsc/props/crashcart/medicalstretcher.mdl"
 
 ENT.CONSTS = {}

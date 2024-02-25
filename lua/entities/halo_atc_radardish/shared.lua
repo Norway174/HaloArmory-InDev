@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
+ENT.IsHALOARMRY = true
+
 ENT.Editable = true
 
 ENT.RadarModel = "models/valk/haloreach/unsc/props/crate/antenna_mast.mdl"

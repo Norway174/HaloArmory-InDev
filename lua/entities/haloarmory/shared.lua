@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMRY = true
+
 ENT.Model = "models/ishi/halo_rebirth/props/human/ammo_box.mdl"
 ENT.Skin = 0
 ENT.Bodygroups = {

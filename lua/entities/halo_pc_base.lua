@@ -10,6 +10,8 @@ ENT.Spawnable = false
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
+ENT.IsHALOARMRY = true
+
 --ENT.DeviceType = "generic_screen"
 
 ENT.PanelPos = Vector(-1, -10.5, 26.8)

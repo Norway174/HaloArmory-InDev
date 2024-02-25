@@ -8,3 +8,5 @@ ENT.Author = "Norway174"
 ENT.Spawnable = false
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
+
+ENT.IsHALOARMRY = true

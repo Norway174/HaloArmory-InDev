@@ -10,6 +10,8 @@ ENT.AdminOnly = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE_HUGE
 
+ENT.IsHALOARMRY = true
+
 ENT.Model = "models/valk/halocustomedition/unsc/props/frigate/frigate.mdl"
 
 ENT.HALOARMORY_Ships_Presets = true
