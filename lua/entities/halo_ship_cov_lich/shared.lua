@@ -10,4 +10,6 @@ ENT.AdminOnly = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE_HUGE
 
+ENT.IsHALOARMORY = true
+
 ENT.Model = "models/valk/h4/covenant/lich/lich.mdl"

@@ -9,6 +9,8 @@ ENT.Category = "HALOARMORY - Logistics"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 ENT.StoredSupplies = 5000
 ENT.MaxCapacity = 5000
 

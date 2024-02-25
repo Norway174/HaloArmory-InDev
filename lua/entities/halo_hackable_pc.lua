@@ -10,6 +10,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
+ENT.IsHALOARMORY = true
+
 
 
 function ENT:SetupDataTables()

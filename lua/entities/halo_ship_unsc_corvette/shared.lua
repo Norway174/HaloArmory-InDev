@@ -10,6 +10,8 @@ ENT.AdminOnly = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE_HUGE
 
+ENT.IsHALOARMORY = true
+
 ENT.Model = "models/valk/ce/unsc/draco/draco.mdl"
 
 ENT.HALOARMORY_CollisionBoundsOffset = Vector(170,0,0)

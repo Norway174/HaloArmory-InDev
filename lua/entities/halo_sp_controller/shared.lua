@@ -7,6 +7,8 @@ ENT.Category = "HALOARMORY - Logistics"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 
 ENT.DeviceName = "Controller Node"
 ENT.DeviceType = "controller"

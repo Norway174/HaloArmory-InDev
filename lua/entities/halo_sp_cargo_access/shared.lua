@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMORY = true
+
 ENT.DeviceName = "Cargo Node"
 ENT.DeviceType = "cargo_access"
 ENT.RateM = 0 // Positive number to add resources, negative to take away, 0 to disable. Resources are updated every minute.

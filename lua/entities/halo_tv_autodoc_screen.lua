@@ -8,4 +8,6 @@ ENT.Category = "HALOARMORY - UNSC"
 ENT.Author = "Norway174"
 ENT.Spawnable = false
 
+ENT.IsHALOARMORY = true
+
 ENT.DeviceType = "auto_doc_screen"

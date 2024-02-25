@@ -8,6 +8,8 @@ ENT.Category = "HALOARMORY - UNSC"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 ENT.Model = "models/valk/halo3/unsc/props/military/monitor_default.mdl"
 
 ENT.PanelPos = Vector(-2.4, 131.8, 81)

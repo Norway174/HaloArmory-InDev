@@ -8,6 +8,8 @@ ENT.Category = "HALOARMORY - UNSC"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 ENT.DeviceType = "room_claim_screen"
 
 ENT.Editable = true

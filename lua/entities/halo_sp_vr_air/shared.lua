@@ -7,6 +7,8 @@ ENT.Category = "HALOARMORY - Vehicle Requisition"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 
 ENT.DeviceName = "Vehicle Requisition Air"
 ENT.DeviceType = "vehicle_requisition_air"

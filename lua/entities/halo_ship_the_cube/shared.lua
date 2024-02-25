@@ -10,4 +10,6 @@ ENT.AdminOnly = true
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE_HUGE
 
+ENT.IsHALOARMORY = true
+
 ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"

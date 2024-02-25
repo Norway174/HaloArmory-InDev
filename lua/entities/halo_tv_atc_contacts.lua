@@ -8,6 +8,8 @@ ENT.Category = "HALOARMORY - ATC"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 ENT.Editable = true
 
 ENT.DeviceType = "atc_contacts_screen"

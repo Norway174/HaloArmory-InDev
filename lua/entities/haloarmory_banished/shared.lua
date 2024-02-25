@@ -9,6 +9,8 @@ ENT.Spawnable = true
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.IsHALOARMORY = true
+
 ENT.Model = "models/valk/haloreach/covenant/props/crates/crate_space_open.mdl"
 ENT.Skin = 2
 ENT.Bodygroups = {

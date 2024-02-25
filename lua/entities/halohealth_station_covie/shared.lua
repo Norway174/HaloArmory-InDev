@@ -8,6 +8,8 @@ ENT.Category = "HALOARMORY - Covenant"
 ENT.Author = "Norway174"
 ENT.Spawnable = true
 
+ENT.IsHALOARMORY = true
+
 ENT.Editable = true
 
 ENT.BaseModel = "models/impulse/halo/props/covenant/military/cov_sword_holder.mdl"
