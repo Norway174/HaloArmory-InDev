@@ -47,9 +47,13 @@ end
 
 
 if SERVER then
+    function ENT:CustomModelSetup()
+        self:SetSubMaterial( 4, "Models/effects/vol_light001" )
+    end
+
     function ENT:Initialize()
         self:SetModel(self.Model)
-        self:SetSubMaterial( 4, "Models/effects/vol_light001" )
+        self:CustomModelSetup()
 
         -- Physics stuff
         self:SetMoveType( MOVETYPE_VPHYSICS )
