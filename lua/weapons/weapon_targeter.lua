@@ -246,9 +246,9 @@ if CLIENT then
 				end
 				
 				if (v.bodygroup) then
-					for k, v in pairs( v.bodygroup ) do
-						if (model:GetBodygroup(k) != v) then
-							model:SetBodygroup(k, v)
+					for k2, v2 in pairs( v.bodygroup ) do
+						if (model:GetBodygroup(k2) != v2) then
+							model:SetBodygroup(k2, v2)
 						end
 					end
 				end
@@ -363,9 +363,9 @@ if CLIENT then
 				end
 				
 				if (v.bodygroup) then
-					for k, v in pairs( v.bodygroup ) do
-						if (model:GetBodygroup(k) != v) then
-							model:SetBodygroup(k, v)
+					for k2, v2 in pairs( v.bodygroup ) do
+						if (model:GetBodygroup(k2) != v2) then
+							model:SetBodygroup(k2, v2)
 						end
 					end
 				end
