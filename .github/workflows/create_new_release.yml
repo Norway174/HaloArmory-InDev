@@ -37,7 +37,7 @@ jobs:
   create-release:
     needs: check-version
     runs-on: ubuntu-latest
-    if: ${{ env.CREATE_RELEASE == 'true' }}
+    if: ${{ github.CREATE_RELEASE == 'true' }}
     steps:
       - name: Create release
         uses: actions/create-release@v1
