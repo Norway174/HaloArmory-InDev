@@ -10,6 +10,7 @@ jobs:
         uses: actions/checkout@master
       - name: Zip Folder
         run: |
+          cd ../
           rm -rf Haloarmory.zip
           zip -r Haloarmory.zip HaloArmory-InDev -x ".git/*" ".github/*" "README.md"
       - name: Send file to Discord channel
