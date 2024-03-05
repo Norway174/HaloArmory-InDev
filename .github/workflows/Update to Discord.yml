@@ -16,12 +16,12 @@ jobs:
           cd ../
           cp -vr HaloArmory-InDev haloarmory-v1
           rm -rf HaloArmory-InDev/Haloarmory.zip
-          zip -r HaloArmory-InDev/Haloarmory.zip ./haloarmory-v1 -x ".git/*" ".github/*" "README.md"
+          zip -r HaloArmory-InDev/Haloarmory.zip ./haloarmory-v1 -x "haloarmory-v1/.git/*" "haloarmory-v1/.github/*" "haloarmory-v1/README.md"
       - name: Send Discord Update
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-title: "Foo"
-          embed-description: "Bar"
+          embed-description: "${{ github.event.workflow_run.head_commit.message }}"
           embed-color: 3104415
           filename: "./Haloarmory.zip"
