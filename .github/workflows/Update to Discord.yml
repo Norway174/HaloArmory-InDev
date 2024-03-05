@@ -14,9 +14,9 @@ jobs:
       - name: Zip Folder
         run: |
           cd ../
-          mv ./HaloArmory-InDev ./haloarmory-v1
-          rm -rf Haloarmory.zip
-          zip -r Haloarmory.zip ./haloarmory-v1 -x ".git/*" ".github/*" "README.md"
+          cp -r ./HaloArmory-InDev ./haloarmory-v1
+          rm -rf HaloArmory-InDev/Haloarmory.zip
+          zip -r HaloArmory-InDev/Haloarmory.zip ./haloarmory-v1 -x ".git/*" ".github/*" "README.md"
       - name: Send Discord Update
         uses: tsickert/discord-webhook@v5.3.0
         with:
