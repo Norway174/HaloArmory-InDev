@@ -12,7 +12,10 @@ jobs:
 
       - name: Read version from file
         id: read-version
-        run: echo "VERSION=$(cat ./.git/haloarmory_version)" >> $GITHUB_ENV
+        run: |
+          ls
+          cat ./.git/haloarmory_version
+          echo "VERSION=$(cat ./.git/haloarmory_version)" >> $GITHUB_ENV
 
       - name: Get latest release
         id: get-latest-release
