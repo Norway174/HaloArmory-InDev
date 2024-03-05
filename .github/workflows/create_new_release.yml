@@ -5,6 +5,8 @@ on:
 
 env:
   CREATE_RELEASE: 'false'
+  VERSION: ''
+  LATEST_RELEASE: ''
 
 jobs:
   check-version:
@@ -37,10 +39,10 @@ jobs:
   create-release:
     needs: check-version
     runs-on: ubuntu-latest
-    if: ${{ github.CREATE_RELEASE == 'true' }}
     steps:
       - name: Create release
         uses: actions/create-release@v1
+        if: env.CREATE_RELEASE == 'true'
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}
