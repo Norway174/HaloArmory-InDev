@@ -32,6 +32,6 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-title: "Foo"
-          embed-description: "${{ github.event.commits[0].message }}"
+          embed-description: "${{ github.head_commit.message }}"
           embed-color: 3104415
           filename: "./Haloarmory.zip"
