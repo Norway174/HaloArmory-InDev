@@ -13,38 +13,37 @@ jobs:
 
       - name: Read version from file
         id: read-version
-        run: echo "::set-output name=version::$(cat .git/haloarmory_version)"
+        run: echo "VERSION=$(cat .git/haloarmory_version)" >> $GITHUB_ENV
 
       - name: Get latest release
         id: get-latest-release
         run: |
           latest_release=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
-          echo "::set-output name=latest_release::$latest_release"
+          echo "LATEST_RELEASE=$latest_release" >> $GITHUB_ENV
 
       - name: Compare versions
         id: compare-versions
         run: |
-          if [[ "${{ steps.read-version.outputs.version }}" != "${{ steps.get-latest-release.outputs.latest_release }}" ]]; then
+          if [[ "${{ env.VERSION }}" != "${{ env.LATEST_RELEASE }}" ]]; then
             echo "Versions are different. Creating a new release..."
-            echo "::set-output name=create_release::true"
+            echo "CREATE_RELEASE=true" >> $GITHUB_ENV
           else
             echo "Versions match. No need to create a new release."
-            echo "::set-output name=create_release::false"
+            echo "CREATE_RELEASE=false" >> $GITHUB_ENV
           fi
 
   create-release:
     needs: check-version
     runs-on: ubuntu-latest
-    if: ${{ needs.check-version.outputs.create_release == 'true' }}
+    if: ${{ env.CREATE_RELEASE == 'true' }}
 
     steps:
       - name: Create release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.read-version.outputs.version }}
-          release_name: Release ${{ steps.read-version.outputs.version }}
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
           body: |
-            Release notes for version ${{ steps.read-version.outputs.version }}
+            Release notes for version ${{ env.VERSION }}
           draft: false
           prerelease: false
-
