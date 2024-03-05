@@ -14,7 +14,7 @@ jobs:
       - name: Zip Folder
         run: |
           cd ../
-          cp -r ./${{ github.event.name }} ./haloarmory-v1
+          cp -vr ${{ github.event.name }} haloarmory-v1
           rm -rf ${{ github.event.name }}/Haloarmory.zip
           zip -r ${{ github.event.name }}/Haloarmory.zip ./haloarmory-v1 -x ".git/*" ".github/*" "README.md"
       - name: Send Discord Update
