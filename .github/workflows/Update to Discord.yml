@@ -12,6 +12,13 @@ jobs:
         run: |
           rm -rf Haloarmory.zip
           zip -r Haloarmory.zip . -x ".git/*" ".github/*" "README.md"
+      - name: Send Notification
+        uses: Retr0-01/better-discord-notification@main
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          embed-color: '3104415'
+          footer-icon: 'https://cdn.discordapp.com/attachments/1140848938744815738/1214578704592797716/ONI_Seal_1.png?ex=65f99f90&is=65e72a90&hm=9157fd348ad33684372dd345d93f0c31c0a689ba4f1b8c784f4f19f9fcb82879&'
+          ignore-hidden: 'false'
       - name: Send file to Discord channel
         uses: sinshutu/upload-to-discord@master
         env:
