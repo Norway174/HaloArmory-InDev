@@ -24,14 +24,12 @@ jobs:
       - name: Zip Folder
         run: |
           cd ../
-          cp -vr HaloArmory-InDev haloarmory-v1
-          rm -rf HaloArmory-InDev/Haloarmory.zip
-          zip -r HaloArmory-InDev/Haloarmory.zip ./haloarmory-v1 -x "haloarmory-v1/.git/*" "haloarmory-v1/.github/*" "haloarmory-v1/README.md"
+          cp -vr HaloArmory-InDev haloarmory-v${{ github.run_number }}
+          rm -rf "HaloArmory-InDev/Haloarmory_V${{ github.run_number }}.zip"
+          zip -r "HaloArmory-InDev/Haloarmory_V${{ github.run_number }}.zip" ./haloarmory-v${{ github.run_number }} -x "haloarmory-v${{ github.run_number }}/.git/*" "haloarmory-v${{ github.run_number }}/.github/*" "haloarmory-v${{ github.run_number }}/README.md"
       - name: Send Discord Update
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          embed-title: "Foo"
-          embed-description: "${{ github.head_commit.message }}"
-          embed-color: 3104415
-          filename: "./Haloarmory.zip"
+          content: "${{ github.head_commit.message }}"
+          filename: "./Haloarmory_V${{ github.run_number }}.zip"
