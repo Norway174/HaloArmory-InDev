@@ -3,10 +3,12 @@ name: Check and Create Release
 on:
   workflow_dispatch: # Manually trigger the workflow
 
+env:
+  CREATE_RELEASE: 'false'
+
 jobs:
   check-version:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,8 +37,7 @@ jobs:
   create-release:
     needs: check-version
     runs-on: ubuntu-latest
-    if: env.CREATE_RELEASE == 'true'
-
+    if: ${{ env.CREATE_RELEASE == 'true' }}
     steps:
       - name: Create release
         uses: actions/create-release@v1
