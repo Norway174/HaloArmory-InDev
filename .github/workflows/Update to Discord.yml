@@ -10,12 +10,11 @@ jobs:
         uses: actions/checkout@master
       - name: Zip Folder
         run: |
-          cd ../
           rm -rf Haloarmory.zip
-          zip -r Haloarmory.zip HaloArmory-InDev -x ".git/*" ".github/*" "README.md"
+          zip -r Haloarmory.zip . -x ".git/*" ".github/*" "README.md"
       - name: Send file to Discord channel
         uses: sinshutu/upload-to-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          args: ../Haloarmory.zip
+          args: Haloarmory.zip
