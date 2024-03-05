@@ -18,6 +18,7 @@ jobs:
         # echo "${{toJSON(github.event)}}"
         run: |
           echo "Last commit message: ${{ github.event.commits[0].message }}"
+          echo "${{ toJSON(github.event) }}"
       - name: Checkout Repository
         uses: actions/checkout@master
       - name: Zip Folder
