@@ -3,11 +3,6 @@ name: Check and Create Release
 on:
   workflow_dispatch: # Manually trigger the workflow
 
-env:
-  CREATE_RELEASE: 'false'
-  VERSION: ''
-  LATEST_RELEASE: ''
-
 jobs:
   check-version:
     runs-on: ubuntu-latest
