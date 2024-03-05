@@ -1,6 +1,13 @@
 name: Upload Haloarmory to Discord
+
+# Controls when the workflow will run
 on:
-  workflow_dispatch
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+  
 jobs:
   zip-n-push:
     name: Zip and Push
@@ -24,6 +31,6 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-title: "Foo"
-          embed-description: "${{ github.event.workflow_run.head_commit.message }}"
+          embed-description: "${{ github.event.commits[0].message }}"
           embed-color: 3104415
           filename: "./Haloarmory.zip"
