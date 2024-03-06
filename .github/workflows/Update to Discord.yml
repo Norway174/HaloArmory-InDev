@@ -38,7 +38,7 @@ jobs:
               const commits = JSON.parse(process.env.COMMITS);
               var lines = "";
               for (const commit of commits) {
-                lines += "```" + commit.message + "``` "
+                lines += "```" + commit.message + "```"
               }
               return lines
       - name: Send Discord Update
