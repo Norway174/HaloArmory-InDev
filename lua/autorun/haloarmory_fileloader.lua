@@ -18,7 +18,7 @@ local loadFolders = {
     "haloarmory/vehicle_pickup", -- Adds the ability to pick up vehicles/items and supplies, with Pelicans or other vehicles.
     --"haloarmory/halo_redux", -- Used for the infmap. Experimental. Speeds up Pelicans flights.
     "haloarmory/halo_requisition", -- Adds the ability to requisition vehicles.
-    "starwarsarmory", -- OPTIONAL STARWARS CONTENT: Converts the armory to support Star Wars. Disables Halo. Requires STARWARSARMORY.
+    "haloarmory/modules", -- Loads costum modules if there's any.
 }
 
 local ignoreFiles = {}
