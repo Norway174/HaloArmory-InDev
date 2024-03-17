@@ -28,7 +28,6 @@ ENT.Theme = {
     btnDisabled = Color(53,53,53),
 }
 
-
 ENT.PanelPos = Vector(-8, -15, 62)
 ENT.PanelAng = Angle(0, 0, 75)
 ENT.PanelScale = .1
