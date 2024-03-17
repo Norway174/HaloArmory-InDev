@@ -23,6 +23,8 @@ ENT.Spawnable = true
 ENT.AdminOnly = false
 
 ENT.IsHALOARMORY = true
+
+ENT.Model = "models/valk/halo3/unsc/props/military/flare.mdl"
 ---------------------------------------------------------------------------------------------------------------------------------------------
 if CLIENT then
     language.Add("obj_vj_flareround", "Flare Round")
@@ -50,7 +52,7 @@ local colorRed = Color(255, 0, 0)
 local colorTrailRed = Color(155, 0, 0, 150)
 --
 function ENT:Initialize()
-    if self:GetModel() == "models/error.mdl" then self:SetModel("models/valk/halo3/unsc/props/military/flare.mdl") end
+    if self:GetModel() == "models/error.mdl" then self:SetModel( self.Model ) end
     self:PhysicsInit(SOLID_VPHYSICS)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
