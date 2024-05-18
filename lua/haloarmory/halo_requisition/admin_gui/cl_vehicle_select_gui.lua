@@ -103,7 +103,87 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
         --draw.RoundedBox( 0, 0, 0, w, h, Color( 128, 20, 20, 187) )
     end
 
-    // Top is a model preview of the vehicle.
+
+    -- Draw a model panel
+    local VehicleModelPreview = vgui.Create("DModelPanel", LoadoutTop)
+    VehicleModelPreview:Dock(FILL)
+    //VehicleModelPreview:SetSize(SelectedVehicleContainer:GetWide(), SelectedVehicleContainer:GetTall())
+    //VehicleModelPreview:DockMargin(5, 5, 5, 5)
+    
+    VehicleModelPreview:SetFOV(30)
+    VehicleModelPreview:SetDirectionalLight(BOX_RIGHT, Color(255, 189, 135))
+    VehicleModelPreview:SetDirectionalLight(BOX_LEFT, Color(125, 182, 252))
+    VehicleModelPreview:SetAmbientLight(Vector(-64, -64, -64))
+    VehicleModelPreview:SetAnimated(true)
+    --VehicleModelPreview:SetCursor("arrow")
+    VehicleModelPreview.Angles = Angle(0, 0, 0)
+
+    
+    // Set the model - required
+    VehicleModelPreview:SetModel(VehicleModel)
+    
+    -- Calculate the center of the model
+    local mins, maxs = VehicleModelPreview.Entity:GetModelBounds()
+    local center = (mins + maxs) / 2
+    local distance = mins:Distance(maxs)
+    
+    VehicleModelPreview:SetLookAt(center)
+    
+    -- Initialize the camera distance and angles
+    local camDistance = distance * 2.5
+    local pitch = 15
+    local yaw = 45
+
+    VehicleModelPreview.FarZ = (distance * 10 + 1000)
+    
+    -- Hold to rotate
+    function VehicleModelPreview:DragMousePress()
+        self.PressX, self.PressY = input.GetCursorPos()
+        self.Pressed = true
+    end
+    
+    function VehicleModelPreview:DragMouseRelease()
+        self.Pressed = false
+    end
+    
+    function VehicleModelPreview:OnMouseWheeled(delta)
+        local speed = 50
+        // Increase the speed the higher the distance
+        speed = speed * (distance / 1000)
+        camDistance = math.Clamp(camDistance - delta * speed, 50, distance * 10)
+        //print(camDistance)
+    end
+
+    function VehicleModelPreview:LayoutEntity(ent)
+        if (self.bAnimated) then self:RunAnimation() end
+    
+        if (self.Pressed) then
+            local mx, my = input.GetCursorPos()
+    
+            -- Update the pitch and yaw angles based on mouse movement
+            yaw = yaw + ((self.PressX or mx) - mx) * 0.8 -- Invert left-right control and increase sensitivity
+            pitch = math.Clamp(pitch - ((self.PressY or my) - my) * 0.8, -89, 89) -- Normal up-down control and increase sensitivity
+    
+            self.PressX, self.PressY = mx, my
+        end
+    
+        -- Calculate the camera position using spherical coordinates
+        local radiansPitch = math.rad(pitch)
+        local radiansYaw = math.rad(yaw)
+        
+        local x = camDistance * math.cos(radiansPitch) * math.cos(radiansYaw)
+        local y = camDistance * math.cos(radiansPitch) * math.sin(radiansYaw)
+        local z = camDistance * math.sin(radiansPitch)
+    
+        VehicleModelPreview:SetCamPos(center + Vector(x, y, z))
+        VehicleModelPreview:SetLookAt(center)
+
+    end
+
+
+
+
+--[[     // Top is a model preview of the vehicle.
     -- Draw a model panel
     local ModelPanel = vgui.Create("DAdjustableModelPanel", LoadoutTop)
     ModelPanel:Dock(FILL)
@@ -148,7 +228,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
         self.aLookAngle = self.aLookAngle + Angle( y * 4, x * 4, 0 )
         self.vCamPos = self.OrbitPoint - self.aLookAngle:Forward() * self.OrbitDistance
-    end
+    end ]]
 
     // Create a DVerticalDivider to split the bottom half into two halves.
     local LoadoutBottomSplitter = vgui.Create("DHorizontalDivider", LoadoutBottom)
@@ -245,7 +325,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
         // Update the Model Preview with the new color.
         if VehicleBeingEdited["colors"][ColorPickerDropDown:GetValue()] and IsColor( VehicleBeingEdited["colors"][ColorPickerDropDown:GetValue()] ) then
-            ModelPanel:SetColor( VehicleBeingEdited["colors"][VehicleBeingEdited["defaults"]["color"]] )
+            VehicleModelPreview:SetColor( VehicleBeingEdited["colors"][VehicleBeingEdited["defaults"]["color"]] )
         end
 
         //ColorPickerDropDown:Clear()
@@ -258,7 +338,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
             // Update the Model Preview with the new color.
             if VehicleBeingEdited["colors"][value] and IsColor( VehicleBeingEdited["colors"][value] ) then
-                ModelPanel:SetColor( VehicleBeingEdited["colors"][value] )
+                VehicleModelPreview:SetColor( VehicleBeingEdited["colors"][value] )
             end
 
         end
@@ -278,7 +358,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
         SkinPickerDropDown:SetValue( VehicleBeingEdited["defaults"]["skin"] )
 
         if VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] and isnumber( VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] ) then
-            ModelPanel.Entity:SetSkin( VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] )
+            VehicleModelPreview.Entity:SetSkin( VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] )
         end
 
         for key, value in pairs( VehicleBeingEdited["skins"] ) do
@@ -289,7 +369,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
             // Update the Model Preview with the new skin.
             if VehicleBeingEdited["skins"][value] and isnumber( VehicleBeingEdited["skins"][value] ) then
-                ModelPanel.Entity:SetSkin( VehicleBeingEdited["skins"][value] )
+                VehicleModelPreview.Entity:SetSkin( VehicleBeingEdited["skins"][value] )
             end
 
         end
@@ -331,7 +411,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
             BodygroupTileLayout:SetSpaceX( 2 )
             BodygroupTileLayout:SetSpaceY( 2 )
 
-            local BodyGroup_ID = ModelPanel.Entity:FindBodygroupByName( key )
+            local BodyGroup_ID = VehicleModelPreview.Entity:FindBodygroupByName( key )
 
             --print( "Key;", key, "Value:", value, "ID:", BodyGroup_ID )
             --PrintTable( value )
@@ -348,7 +428,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
                 BodygroupSubPanel.Paint = function( self, w, h )
                     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
 
-                    if ModelPanel.Entity:GetBodygroup( BodyGroup_ID ) == value[i + 1] then
+                    if VehicleModelPreview.Entity:GetBodygroup( BodyGroup_ID ) == value[i + 1] then
                         draw.RoundedBox( 0, 1, 1, w-2, h-2, Color( 0, 255, 0, 70) )
                     end
 
@@ -359,7 +439,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
                 BodygroupSubPanel.DoClick = function( self )
                     DoClickBackup( self )
 
-                    ModelPanel.Entity:SetBodygroup( BodyGroup_ID, value[i + 1] )
+                    VehicleModelPreview.Entity:SetBodygroup( BodyGroup_ID, value[i + 1] )
                 end
 
             end
@@ -513,6 +593,11 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
                 colorPicker:SetPos( 10, 35 )
                 colorPicker:SetSize( 200, 200 )
                 colorPicker:SetAlpha( 255 )
+
+                colorPicker.ValueChanged = function( self, newColor )
+                    newColor = Color( newColor.r, newColor.g, newColor.b, 255 )
+                    VehicleModelPreview:SetColor( newColor )
+                end
                 
                 local colorSaveButton = vgui.Create( "DButton", ColorPickerWindow )
                 colorSaveButton:SetText( "Save Color" )
@@ -530,7 +615,12 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
                 end
 
+                ColorPickerWindow.OnClose = function()
+                    RefreshPreviewControls()
+                end
+
             end
+
 
 
 
@@ -596,7 +686,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
             SkinLabel:SetWide( 250 )
             SkinLabel:SetText( tostring(key) )
 
-            local NumberOfSkins = ModelPanel.Entity:SkinCount() - 1
+            local NumberOfSkins = VehicleModelPreview.Entity:SkinCount() - 1
 
             local SkinNumberWang = vgui.Create("DNumberWang", topPanel)
             SkinNumberWang:Dock( FILL )
@@ -681,7 +771,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
     local LoadoutBodygroupsScrollbar = vgui.Create("DScrollPanel", LoadoutTabBodygroups)
     LoadoutBodygroupsScrollbar:Dock( FILL )
 
-    local ListOfBodygroups = ModelPanel.Entity:GetBodyGroups()
+    local ListOfBodygroups = VehicleModelPreview.Entity:GetBodyGroups()
 
     // Remove any bodygroups from the VehicleBeingEdited["bodygroups"] table that are not in the ListOfBodygroups table.
     for key, value in pairs( VehicleBeingEdited["bodygroups"] ) do

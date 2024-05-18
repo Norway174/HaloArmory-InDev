@@ -242,18 +242,58 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 end
             end
 
-            // Create a DModelPanel to display the vehicle
-            local VehicleModelPanel = vgui.Create("DModelPanel", VehiclePanel)
-            VehicleModelPanel:Dock(LEFT)
-            VehicleModelPanel:SetWide( 50 )
 
-            VehicleModelPanel:SetModel( VehicleModel )
+            -- Draw a model panel
+            local VehicleModelPreviewSmall = vgui.Create("DModelPanel", VehiclePanel)
+            //VehicleModelPreviewSmall:Dock(FILL)
+            VehicleModelPreviewSmall:SetSize(VehiclePanel:GetTall(), VehiclePanel:GetTall())
+            VehicleModelPreviewSmall:SetPos(5, 0)
+            //VehicleModelPreviewSmall:SetSize(75, 75)
+            //VehicleModelPreviewSmall:SetSize(SelectedVehicleContainer:GetWide(), SelectedVehicleContainer:GetTall())
+            VehicleModelPreviewSmall:DockMargin(5, 5, 5, 5)
+            
+            VehicleModelPreviewSmall:SetFOV(30)
+            VehicleModelPreviewSmall:SetDirectionalLight(BOX_RIGHT, Color(255, 189, 135))
+            VehicleModelPreviewSmall:SetDirectionalLight(BOX_LEFT, Color(125, 182, 252))
+            VehicleModelPreviewSmall:SetAmbientLight(Vector(-64, -64, -64))
+            VehicleModelPreviewSmall:SetAnimated(true)
+            //VehicleModelPreviewSmall:SetCursor("arrow")
+            VehicleModelPreviewSmall.Angles = Angle(0, 0, 0)
+            
+            // Set the model
+            VehicleModelPreviewSmall:SetModel(VehicleModel)
 
-            VehicleModelPanel:SetCamPos( Vector( 134, 100, 100) )
-            VehicleModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
-            VehicleModelPanel:SetFOV( 90 )
+            // Set the color
+            local color = v["colors"][ v["defaults"]["color"] ]
+            color = Color( color.r, color.g, color.b, 255 )
+            VehicleModelPreviewSmall:SetColor( color )
+            
+            -- Calculate the center of the model
+            local mins, maxs = VehicleModelPreviewSmall.Entity:GetModelBounds()
+            local center = (mins + maxs) / 2
+            local distance = mins:Distance(maxs)
+            
+            VehicleModelPreviewSmall:SetLookAt(center)
+            
+            -- Initialize the camera distance and angles
+            local camDistance = distance * 1.7
+            local pitch = 15
+            local yaw = 45
 
-            function VehicleModelPanel:LayoutEntity( Entity )
+            function VehicleModelPreviewSmall:LayoutEntity(ent)
+                if (self.bAnimated) then self:RunAnimation() end
+            
+                -- Calculate the camera position using spherical coordinates
+                local radiansPitch = math.rad(pitch)
+                local radiansYaw = math.rad(yaw)
+                
+                local x = camDistance * math.cos(radiansPitch) * math.cos(radiansYaw)
+                local y = camDistance * math.cos(radiansPitch) * math.sin(radiansYaw)
+                local z = camDistance * math.sin(radiansPitch)
+            
+                VehicleModelPreviewSmall:SetCamPos(center + Vector(x, y, z))
+                VehicleModelPreviewSmall:SetLookAt(center)
+
             end
 
             // Create an invisible button to select the vehicle
@@ -422,53 +462,87 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         VehicleName:SetFont("QuanticoHeader")
         VehicleName:SetTextColor( HALOARMORY.Requisition.Theme["text"] )
         VehicleName:Dock(TOP)
-        VehicleName:DockMargin(5,5,5,0)
+        VehicleName:DockMargin(0,5,5,0)
         VehicleName:SetContentAlignment(5)
 
+
+
+
+
+
         -- Draw a model panel
-        local ModelPanel = vgui.Create("DAdjustableModelPanel", SelectedVehicleContainer)
-        ModelPanel:Dock(FILL)
-        ModelPanel:SetModel(VehicleModel)
-        --ModelPanel:SetColor(SelectedVehicle["color"])
+        local VehicleModelPreview = vgui.Create("DModelPanel", SelectedVehicleContainer)
+        VehicleModelPreview:Dock(FILL)
+        //VehicleModelPreview:SetSize(SelectedVehicleContainer:GetWide(), SelectedVehicleContainer:GetTall())
+        //VehicleModelPreview:DockMargin(5, 5, 5, 5)
+        
+        VehicleModelPreview:SetFOV(30)
+        VehicleModelPreview:SetDirectionalLight(BOX_RIGHT, Color(255, 189, 135))
+        VehicleModelPreview:SetDirectionalLight(BOX_LEFT, Color(125, 182, 252))
+        VehicleModelPreview:SetAmbientLight(Vector(-64, -64, -64))
+        VehicleModelPreview:SetAnimated(true)
+        VehicleModelPreview:SetCursor("arrow")
+        VehicleModelPreview.Angles = Angle(0, 0, 0)
+        
+        // Set the model - required
+        VehicleModelPreview:SetModel(VehicleModel)
+        
+        -- Calculate the center of the model
+        local mins, maxs = VehicleModelPreview.Entity:GetModelBounds()
+        local center = (mins + maxs) / 2
+        local distance = mins:Distance(maxs)
+        
+        VehicleModelPreview:SetLookAt(center)
+        
+        -- Initialize the camera distance and angles
+        local camDistance = distance * 1.7
+        local pitch = 15
+        local yaw = 45
 
-        ModelPanel:SetCamPos( Vector( 134, 100, 100) )
-        ModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
-        ModelPanel:SetFOV( 120 )
-
-        function ModelPanel:LayoutEntity( Entity )
+        VehicleModelPreview.FarZ = (distance * 10 + 1000)
+        
+        -- Hold to rotate
+        function VehicleModelPreview:DragMousePress()
+            self.PressX, self.PressY = input.GetCursorPos()
+            self.Pressed = true
+        end
+        
+        function VehicleModelPreview:DragMouseRelease()
+            self.Pressed = false
+        end
+        
+        function VehicleModelPreview:OnMouseWheeled(delta)
+            local speed = 50
+            // Increase the speed the higher the distance
+            speed = speed * (distance / 1000)
+            camDistance = math.Clamp(camDistance - delta * speed, 50, distance * 10)
+            //print(camDistance)
         end
 
-        function ModelPanel:OnMousePressed( mousecode )
-
-            self:SetCursor( "none" )
-            self:MouseCapture( true )
-            self.Capturing = true
-            self.MouseKey = mousecode
-
-            if ( self.MouseKey ~= MOUSE_LEFT ) then return end
-            self:SetFirstPerson( true )
-            self:CaptureMouse()
+        function VehicleModelPreview:LayoutEntity(ent)
+            if (self.bAnimated) then self:RunAnimation() end
         
-            -- Helpers for the orbit movement
-            local mins, maxs = self.Entity:GetModelBounds()
-            local center = ( mins + maxs ) / 2
+            if (self.Pressed) then
+                local mx, my = input.GetCursorPos()
         
-            self.OrbitPoint = center
-            self.OrbitDistance = ( self.OrbitPoint - self.vCamPos ):Length()
-        end
+                -- Update the pitch and yaw angles based on mouse movement
+                yaw = yaw + ((self.PressX or mx) - mx) * 0.8 -- Invert left-right control and increase sensitivity
+                pitch = math.Clamp(pitch - ((self.PressY or my) - my) * 0.8, -89, 89) -- Normal up-down control and increase sensitivity
         
+                self.PressX, self.PressY = mx, my
+            end
+        
+            -- Calculate the camera position using spherical coordinates
+            local radiansPitch = math.rad(pitch)
+            local radiansYaw = math.rad(yaw)
+            
+            local x = camDistance * math.cos(radiansPitch) * math.cos(radiansYaw)
+            local y = camDistance * math.cos(radiansPitch) * math.sin(radiansYaw)
+            local z = camDistance * math.sin(radiansPitch)
+        
+            VehicleModelPreview:SetCamPos(center + Vector(x, y, z))
+            VehicleModelPreview:SetLookAt(center)
 
-        function ModelPanel:FirstPersonControls()
-            local x, y = self:CaptureMouse()
-            local scale = self:GetFOV() / 180
-            x = x * -0.5 * scale
-            y = y * 0.5 * scale
-        
-            if ( self.MouseKey ~= MOUSE_LEFT ) then return end
-            if ( input.IsShiftDown() ) then y = 0 end
-
-            self.aLookAngle = self.aLookAngle + Angle( y * 4, x * 4, 0 )
-            self.vCamPos = self.OrbitPoint - self.aLookAngle:Forward() * self.OrbitDistance
         end
 
         // Create a bottom panel for 3 columns of options.
@@ -543,7 +617,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         local function UpdateColor()
             local color = vehicle["colors"][ColorOptionDropDown:GetValue()]
             color = Color( color.r, color.g, color.b, 255 )
-            ModelPanel:SetColor( color )
+            VehicleModelPreview:SetColor( color )
         end
 
         UpdateColor()
@@ -575,7 +649,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         // Set the default skin
         local function UpdateSkin()
-            ModelPanel.Entity:SetSkin( vehicle["skins"][SkinOptionDropDown:GetValue()] )
+            VehicleModelPreview.Entity:SetSkin( vehicle["skins"][SkinOptionDropDown:GetValue()] )
         end
 
         UpdateSkin()
@@ -600,7 +674,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
         for key, value in pairs( ListOfBodygroups ) do
 
-            ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), value[1] )
+            VehicleModelPreview.Entity:SetBodygroup( VehicleModelPreview.Entity:FindBodygroupByName( key ), value[1] )
 
             if table.Count( value ) <= 1 then continue end
 
@@ -644,9 +718,9 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 BodygroupSubPanel.Paint = function( self, w, h )
                     draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
 
-                    local v_ent = ModelPanel.Entity
+                    local v_ent = VehicleModelPreview.Entity
                     local current_bodygroup_id = v_ent:FindBodygroupByName( key )
-                    local current_bodygroup = ModelPanel.Entity:GetBodygroup( current_bodygroup_id )
+                    local current_bodygroup = VehicleModelPreview.Entity:GetBodygroup( current_bodygroup_id )
 
                     if value[self.BodygroupNumber + 1] == current_bodygroup then
                         draw.RoundedBox( 0, 1, 1, w-2, h-2, Color( 0, 255, 0, 70) )
@@ -658,8 +732,8 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 BodygroupSubPanel.DoClick = function(self)
                     //print("Clicked bodygroup", key, BodygroupSubPanel.BodygroupNumber)
 
-                    ModelPanel.Entity:SetBodygroup( ModelPanel.Entity:FindBodygroupByName( key ), value[self.BodygroupNumber + 1] )
-                    ModelPanel.Entity.SelectedBodygroup = value
+                    VehicleModelPreview.Entity:SetBodygroup( VehicleModelPreview.Entity:FindBodygroupByName( key ), value[self.BodygroupNumber + 1] )
+                    VehicleModelPreview.Entity.SelectedBodygroup = value
                 end
 
             end
@@ -700,7 +774,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             local bodygroups = {}
 
             for key, value in pairs( ListOfBodygroups ) do
-                bodygroups[key] = ModelPanel.Entity.SelectedBodygroup or 1
+                bodygroups[key] = VehicleModelPreview.Entity.SelectedBodygroup or 1
             end
 
             selected_Options["bodygroups"] = bodygroups
@@ -765,20 +839,56 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     end
 
 
-    // Display the vehicle model
-    local VehicleModelPanel = vgui.Create("DModelPanel", QueueOnPadPanel)
-    VehicleModelPanel:Dock(LEFT)
-    VehicleModelPanel:SetWide( 75 )
-
     local Ent_OnPad_Model = "models/m_anm.mdl"
 
-    VehicleModelPanel:SetModel( Ent_OnPad_Model )
 
-    VehicleModelPanel:SetCamPos( Vector( 134, 100, 100) )
-    VehicleModelPanel:SetLookAng( Angle( 25, -140, 0 ) )
-    VehicleModelPanel:SetFOV( 90 )
+    -- Draw a model panel
+    local VehicleModelPreviewSmall = vgui.Create("DModelPanel", QueueOnPadPanel)
+    VehicleModelPreviewSmall:Dock(LEFT)
+    //VehicleModelPreviewSmall:SetSize(QueueOnPadPanel:GetTall(), QueueOnPadPanel:GetTall())
+    VehicleModelPreviewSmall:SetSize(75, 75)
+    VehicleModelPreviewSmall:SetPos(5, 0)
+    //VehicleModelPreviewSmall:SetSize(75, 75)
+    //VehicleModelPreviewSmall:SetSize(SelectedVehicleContainer:GetWide(), SelectedVehicleContainer:GetTall())
+    VehicleModelPreviewSmall:DockMargin(5, 5, 5, 5)
+    
+    VehicleModelPreviewSmall:SetFOV(30)
+    VehicleModelPreviewSmall:SetDirectionalLight(BOX_RIGHT, Color(255, 189, 135))
+    VehicleModelPreviewSmall:SetDirectionalLight(BOX_LEFT, Color(125, 182, 252))
+    VehicleModelPreviewSmall:SetAmbientLight(Vector(-64, -64, -64))
+    VehicleModelPreviewSmall:SetAnimated(true)
+    //VehicleModelPreviewSmall:SetCursor("arrow")
+    VehicleModelPreviewSmall.Angles = Angle(0, 0, 0)
+    
+    // Set the model
+    VehicleModelPreviewSmall:SetModel(Ent_OnPad_Model)
+    
+    -- Calculate the center of the model
+    local mins, maxs = VehicleModelPreviewSmall.Entity:GetModelBounds()
+    local center = (mins + maxs) / 2
+    local distance = mins:Distance(maxs)
+    
+    VehicleModelPreviewSmall:SetLookAt(center)
+    
+    -- Initialize the camera distance and angles
+    local camDistance = distance * 1.7
+    local pitch = 15
+    local yaw = 45
 
-    function VehicleModelPanel:LayoutEntity( Entity )
+    function VehicleModelPreviewSmall:LayoutEntity(ent)
+        if (self.bAnimated) then self:RunAnimation() end
+    
+        -- Calculate the camera position using spherical coordinates
+        local radiansPitch = math.rad(pitch)
+        local radiansYaw = math.rad(yaw)
+        
+        local x = camDistance * math.cos(radiansPitch) * math.cos(radiansYaw)
+        local y = camDistance * math.cos(radiansPitch) * math.sin(radiansYaw)
+        local z = camDistance * math.sin(radiansPitch)
+    
+        VehicleModelPreviewSmall:SetCamPos(center + Vector(x, y, z))
+        VehicleModelPreviewSmall:SetLookAt(center)
+
     end
 
     // Create a label with the vehicle name
@@ -878,7 +988,18 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             if lastModel ~= Ent_OnPad_Model then
                 lastModel = Ent_OnPad_Model
 
-                VehicleModelPanel:SetModel( Ent_OnPad_Model )
+                VehicleModelPreviewSmall:SetModel( Ent_OnPad_Model )
+                -- Calculate the center of the model
+                mins, maxs = VehicleModelPreviewSmall.Entity:GetModelBounds()
+                center = (mins + maxs) / 2
+                distance = mins:Distance(maxs)
+                
+                VehicleModelPreviewSmall:SetLookAt(center)
+                
+                -- Initialize the camera distance and angles
+                camDistance = distance * 1.7
+                pitch = 15
+                yaw = 45
             end
 
 
@@ -892,7 +1013,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
             if lastModel ~= Ent_OnPad_Model then
                 lastModel = Ent_OnPad_Model
 
-                VehicleModelPanel:SetModel( Ent_OnPad_Model )
+                VehicleModelPreviewSmall:SetModel( Ent_OnPad_Model )
             end
         end
 
