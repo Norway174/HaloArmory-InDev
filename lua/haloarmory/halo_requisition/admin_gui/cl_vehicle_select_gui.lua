@@ -294,6 +294,9 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
         --draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 187) )
     end
 
+    local selectedPreviewColor = nil
+    local selectedPreviewSkin = nil
+
     local function RefreshPreviewControls()
 
         // Remove all children from the panel.
@@ -321,7 +324,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
         local ColorPickerDropDown = vgui.Create("DComboBox", RightSidePreviewControls)
         ColorPickerDropDown:Dock( TOP )
         ColorPickerDropDown:SetTall( 25 )
-        ColorPickerDropDown:SetValue( VehicleBeingEdited["defaults"]["color"] )
+        ColorPickerDropDown:SetValue( selectedPreviewColor or VehicleBeingEdited["defaults"]["color"] )
 
         // Update the Model Preview with the new color.
         if VehicleBeingEdited["colors"][ColorPickerDropDown:GetValue()] and IsColor( VehicleBeingEdited["colors"][ColorPickerDropDown:GetValue()] ) then
@@ -339,6 +342,12 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
             // Update the Model Preview with the new color.
             if VehicleBeingEdited["colors"][value] and IsColor( VehicleBeingEdited["colors"][value] ) then
                 VehicleModelPreview:SetColor( VehicleBeingEdited["colors"][value] )
+
+                if VehicleBeingEdited["defaults"]["color"] == value then
+                    selectedPreviewColor = nil
+                else
+                    selectedPreviewColor = value
+                end
             end
 
         end
@@ -355,7 +364,7 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
         local SkinPickerDropDown = vgui.Create("DComboBox", RightSidePreviewControls)
         SkinPickerDropDown:Dock( TOP )
         SkinPickerDropDown:SetTall( 25 )
-        SkinPickerDropDown:SetValue( VehicleBeingEdited["defaults"]["skin"] )
+        SkinPickerDropDown:SetValue( selectedPreviewSkin or VehicleBeingEdited["defaults"]["skin"] )
 
         if VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] and isnumber( VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] ) then
             VehicleModelPreview.Entity:SetSkin( VehicleBeingEdited["skins"][SkinPickerDropDown:GetValue()] )
@@ -370,6 +379,12 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
             // Update the Model Preview with the new skin.
             if VehicleBeingEdited["skins"][value] and isnumber( VehicleBeingEdited["skins"][value] ) then
                 VehicleModelPreview.Entity:SetSkin( VehicleBeingEdited["skins"][value] )
+
+                if VehicleBeingEdited["defaults"]["skin"] == value then
+                    selectedPreviewSkin = nil
+                else
+                    selectedPreviewSkin = value
+                end
             end
 
         end
