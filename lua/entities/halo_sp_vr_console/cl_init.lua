@@ -43,7 +43,7 @@ function ENT:Draw3D2D( ent )
 
                     if ents.Iterator then
                         for _, the_ent in ents.Iterator() do
-                            if ( ent.VehiclePad ) then
+                            if ( the_ent.VehiclePad ) then
                                 table.insert(pads, the_ent)
                             end
                         end
