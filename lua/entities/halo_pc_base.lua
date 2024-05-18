@@ -119,7 +119,9 @@ if CLIENT then
             self.Theme.background = Material( self.Theme.background, "smooth" )
         end
 
-        if not ui3d2d.startDraw(self:LocalToWorld(self.PanelPos), self:LocalToWorldAngles(self.PanelAng), self.PanelScale, self) then return end 
+        if not ui3d2d.startDraw(self:LocalToWorld(self.PanelPos), self:LocalToWorldAngles(self.PanelAng), self.PanelScale, self) then return end
+
+            //draw.RoundedBox( 0, 0, 0, self.frameW, self.frameH, Color( 219, 23, 23) )
 
             // Draw the background
             surface.SetMaterial( self.Theme.background )

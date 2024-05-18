@@ -5,7 +5,7 @@ function ENT:Draw3D2D( ent )
     local ply = ply or LocalPlayer()
     if not IsValid( ply ) then return end
 
-
+    //draw.RoundedBox( 0, 0, 0, self.frameW, self.frameH, Color( 219, 23, 23) )
 
     // Draw a header that says "UNSC Vehicle Requesition"
     local headerText = "UNSC Vehicle Requesition"
@@ -13,7 +13,7 @@ function ENT:Draw3D2D( ent )
         headerText = self:GetConsoleName()
     end
 
-    draw.DrawText( headerText, "HK_QuanticoHeader", self.frameW * .5, self.frameH * .01, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+    draw.DrawText( headerText, "HK_QuanticoHeader", self.frameW * .5, self.frameH * .15, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 
     // Distance check
     if self:GetPos():Distance( ply:GetPos() ) >= 100 then return end
