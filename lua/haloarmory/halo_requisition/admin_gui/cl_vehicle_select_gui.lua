@@ -560,6 +560,14 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
                 RefreshPreviewControls()
 
+                PopulateColors()
+
+            end
+
+            if table.Count( VehicleBeingEdited["colors"] ) <= 1 then
+                ColorRemoveButton:SetDisabled( true )
+            else 
+                ColorRemoveButton:SetDisabled( false )
             end
 
             local SetAsDefaultButton = vgui.Create("DButton", topPanel)
@@ -730,6 +738,14 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenLoadoutEditor()
 
                 RefreshPreviewControls()
 
+                PopulateSkins()
+
+            end
+
+            if table.Count( VehicleBeingEdited["skins"] ) <= 1 then
+                SkinRemoveButton:SetDisabled( true )
+            else 
+                SkinRemoveButton:SetDisabled( false )
             end
 
             SkinLabel.OnChange = function( self )
@@ -1376,6 +1392,8 @@ function HALOARMORY.VEHICLES.ADMIN_GUI.OpenGUI( VehicleList )
     AddVehicleButton.DoClick = function()
 
         NewVehicle = true
+
+        VehicleBeingEdited = NewTemplateVehicle
 
         HALOARMORY.VEHICLES.ADMIN_GUI.OpenVehicleEditor()
 
