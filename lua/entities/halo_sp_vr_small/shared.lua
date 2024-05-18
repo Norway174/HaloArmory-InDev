@@ -40,6 +40,7 @@ function ENT:CustomDataTables()
     self:NetworkVar( "Entity", 1, "OnPad" )
     self:NetworkVar( "Entity", 2, "Building" )
 
+    self:NetworkVar( "Bool", 0, "RequiresSupplies", { KeyName = "RequiresSupplies", Edit = { type = "Boolean", order = 2 } } )
 
     if SERVER then
         local random_uuid = util.CRC( tostring( self:EntIndex() ) .. "_" .. tostring( CurTime() ) .. "_" .. tostring( math.random( 0, 100000 ) ) )
@@ -58,6 +59,8 @@ function ENT:CustomDataTables()
         self:SetPadID( random_uuid )
         
         self:SetOnPad( NULL )
+
+        self:SetRequiresSupplies( self.RequiresSupplies or true )
     end
 
     self:CustomDataTablesAirPads()

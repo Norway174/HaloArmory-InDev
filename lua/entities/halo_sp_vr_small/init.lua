@@ -209,9 +209,6 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
 
             end
 
-            --Vehicle.HALOARMORY_COST = VehicleTable.cost
-            Vehicle:SetNW2Int( "HALOARMORY_COST", VehicleTable.cost )
-
             // Set the options here
             if VehicleInQueue.options.color then
                 local selectedColor = VehicleTable.colors[VehicleInQueue.options.color]
@@ -262,7 +259,7 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
             Vehicle:CPPISetOwner(ply)
 
             // Remove the supplies from the network
-            if IsValid( Vehicle ) and self.RequiresSupplies then
+            if IsValid( Vehicle ) and self:GetRequiresSupplies() then
                 
                 local success, new_supplies = HALOARMORY.Logistics.AddNetworkSupplies( network_name, -VehicleTable.cost )
 
@@ -271,6 +268,10 @@ function ENT:SpawnVehicle( ply, vehicle_key, vehicle_options )
                     Vehicle:Remove()
                     return
                 end
+
+                
+                --Vehicle.HALOARMORY_COST = VehicleTable.cost
+                Vehicle:SetNW2Int( "HALOARMORY_COST", VehicleTable.cost )
                 
             end
 
@@ -285,7 +286,7 @@ end
 
 function ENT:ReclaimVehicle( ply, vehicle )
 
-    if not self.RequiresSupplies then
+    if not self:GetRequiresSupplies() then
         vehicle:Remove()
         return true
     end

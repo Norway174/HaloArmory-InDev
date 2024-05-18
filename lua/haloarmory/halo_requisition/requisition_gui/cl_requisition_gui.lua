@@ -237,7 +237,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 draw.SimpleText( VehiclePrintName, "QuanticoNormal", 60, 5, HALOARMORY.Requisition.Theme["text"], TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
                 // Draw vehicle cost
-                if PadEnt.RequiresSupplies then
+                if PadEnt:GetRequiresSupplies() then
                     draw.SimpleText( "Cost: " .. HALOARMORY.INTERFACE.PrettyFormatNumber(v["cost"]) .. " supplies ", "HaloArmory_24", w - 5, h - 10, Color(189,189,189), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
                 end
             end
@@ -322,7 +322,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
     local NetworkName = nil
 
-    if PadEnt.RequiresSupplies then
+    if PadEnt:GetRequiresSupplies() then
 
         // Show the network info in the top center panel
         local NetworkInfoPanel = vgui.Create("DPanel", CenterPanel)
@@ -938,7 +938,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         end
         
         local textBtn = "Reclaim"
-        if PadEnt.RequiresSupplies then
+        if PadEnt:GetRequiresSupplies() then
             if NetworkName and NetworkName.Reclaim then
                 textBtn = textBtn .. " ( +"..tostring( HALOARMORY.INTERFACE.PrettyFormatNumber( NetworkName.Reclaim ) ).." )"
             end
@@ -967,12 +967,12 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
         self.OnPadEnt = PadEnt:GetOnPad()
 
 
-        if PadEnt.RequiresSupplies and NetworkName then NetworkName.Reclaim = 0 end
+        if PadEnt:GetRequiresSupplies() and NetworkName then NetworkName.Reclaim = 0 end
 
         if IsValid( self.OnPadEnt ) then
             // RECLAIM BUTTON
             ReclaimButton:SetVisible( true )
-            if PadEnt.RequiresSupplies and NetworkName then
+            if PadEnt:GetRequiresSupplies() and NetworkName then
                 NetworkName.Reclaim = HALOARMORY.Requisition.RefundAmount( self.OnPadEnt )
             end
 
