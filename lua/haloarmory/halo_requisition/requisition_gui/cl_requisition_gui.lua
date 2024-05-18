@@ -857,7 +857,7 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
     VehicleModelPreviewSmall:SetDirectionalLight(BOX_LEFT, Color(125, 182, 252))
     VehicleModelPreviewSmall:SetAmbientLight(Vector(-64, -64, -64))
     VehicleModelPreviewSmall:SetAnimated(true)
-    //VehicleModelPreviewSmall:SetCursor("arrow")
+    VehicleModelPreviewSmall:SetCursor("arrow")
     VehicleModelPreviewSmall.Angles = Angle(0, 0, 0)
     
     // Set the model
@@ -978,9 +978,12 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
 
             --print("Reclaim amount", NetworkName.Reclaim)
 
+            local ModelColor = Color(255,255,255,255)
+
             // MODEL
             if self.OnPadEnt.GetModel then
                 Ent_OnPad_Model = self.OnPadEnt:GetModel()
+                ModelColor = self.OnPadEnt:GetColor()
             else
                 Ent_OnPad_Model = "models/m_anm.mdl"
             end
@@ -989,6 +992,9 @@ function HALOARMORY.Requisition.OpenVehiclePad( PadEnt )
                 lastModel = Ent_OnPad_Model
 
                 VehicleModelPreviewSmall:SetModel( Ent_OnPad_Model )
+                VehicleModelPreviewSmall:SetColor( ModelColor )
+
+
                 -- Calculate the center of the model
                 mins, maxs = VehicleModelPreviewSmall.Entity:GetModelBounds()
                 center = (mins + maxs) / 2
