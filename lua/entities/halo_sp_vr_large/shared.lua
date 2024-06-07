@@ -13,6 +13,8 @@ ENT.IsHALOARMORY = true
 ENT.DeviceName = "Vehicle Requisition Large"
 ENT.DeviceType = "vehicle_requisition_large"
 
+ENT.DeviceIcon = "vgui/haloarmory/icons/largepad.png"
+
 ENT.VehicleSize = { "large",  }
 
 ENT.DeviceModel = "models/valk/h4/unsc/props/vehiclepad/vehiclepad_unsc.mdl"

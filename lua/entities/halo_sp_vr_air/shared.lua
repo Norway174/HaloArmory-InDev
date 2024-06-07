@@ -13,6 +13,8 @@ ENT.IsHALOARMORY = true
 ENT.DeviceName = "Vehicle Requisition Air"
 ENT.DeviceType = "vehicle_requisition_air"
 
+ENT.DeviceIcon = "vgui/haloarmory/icons/airpad.png"
+
 ENT.VehicleSize = { "air", }
 
 ENT.DeviceModel = "models/hunter/plates/plate2x2.mdl"

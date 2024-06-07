@@ -106,7 +106,10 @@ function HALOARMORY.Requisition.OpenPadSelector( callback )
 
             local VehiclePadIcon = vgui.Create( "DImage", VehiclePad )
             VehiclePadIcon:Dock( LEFT )
-            VehiclePadIcon:SetImage( "vgui/haloarmory/icons/anchor.png" )
+
+            local vehicle_icon = v.DeviceIcon or "vgui/haloarmory/icons/anchor.png"
+
+            VehiclePadIcon:SetImage( vehicle_icon )
 
             local VehiclePadName = vgui.Create( "DLabel", VehiclePad )
             VehiclePadName:Dock( FILL )
